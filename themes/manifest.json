@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "default": "deep-ink",
+  "presets": [
+    {
+      "slug": "deep-ink",
+      "name": "Deep Ink",
+      "session": "Long coding sessions",
+      "mode": "dark",
+      "ornament": false,
+      "scheduleHint": "17:30-21:30"
+    },
+    {
+      "slug": "review-split",
+      "name": "Review Split",
+      "session": "PR diff & thread review",
+      "mode": "dark",
+      "ornament": false,
+      "scheduleHint": "afternoon"
+    },
+    {
+      "slug": "lantern-hour",
+      "name": "Lantern Hour",
+      "session": "Late-night warm low-blue light",
+      "mode": "dark",
+      "ornament": true,
+      "scheduleHint": "21:30-06:00"
+    },
+    {
+      "slug": "mekong-morning",
+      "name": "Mekong Morning",
+      "session": "Daylight & bright rooms",
+      "mode": "light",
+      "ornament": false,
+      "scheduleHint": "06:30-17:30"
+    },
+    {
+      "slug": "screenshot-clean",
+      "name": "Screenshot Clean",
+      "session": "Demos, docs & README captures",
+      "mode": "dark",
+      "ornament": false,
+      "scheduleHint": "on-demand"
+    },
+    {
+      "slug": "delta-mint",
+      "name": "Delta Mint",
+      "session": "Single muted accent focus",
+      "mode": "dark",
+      "ornament": false,
+      "scheduleHint": "anytime"
+    }
+  ]
+}

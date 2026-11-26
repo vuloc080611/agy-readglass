@@ -1,0 +1,30 @@
+name: Submit Work-Session Preset
+description: Propose a new readable work-session preset that passes WCAG AA/AAA + APCA.
+title: "[Preset] "
+labels: ["preset", "readability"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Clearframe accepts work-session presets that pass `python tools/check_contrast.py --apca --strict-ergo` with zero copyrighted fanart or `backdrop-filter`.
+  - type: input
+    id: preset-name
+    attributes:
+      label: Preset Name & Work Session
+      placeholder: "e.g. Rainy Porch — late afternoon reading"
+    validations:
+      required: true
+  - type: textarea
+    id: pack-json
+    attributes:
+      label: Generated pack JSON (`scaffold_theme.py` output)
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: contrast-output
+    attributes:
+      label: Output of `python tools/check_contrast.py --apca --file <pack.json>`
+      render: text
+    validations:
+      required: true

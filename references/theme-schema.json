@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Clearframe Preset",
+  "type": "object",
+  "required": [
+    "concept", "primary", "secondary", "glow", "secondaryGlow", "overlayRgb",
+    "textColor", "uiTextColor", "uiMutedColor", "bg", "frameBg", "borderColor",
+    "innerBorder", "sidebarBg", "sidebarHoverBg", "sidebarEnhanceText",
+    "aiCardBg", "aiCardBorder", "headerBg", "headerBorder", "unifiedGlass",
+    "btnBg", "inputGlassBg", "inputCardBg", "modalBg", "modalHeaderBg",
+    "cardBg", "cardSelectedBg", "pureBg", "wallpaper", "clearBackdrop",
+    "isOrnament", "isLight", "pillBg", "pillTextColor", "pillBorder", "pillHoverBg"
+  ],
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "concept": { "type": "string", "minLength": 1 },
+    "primary": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "secondary": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "glow": { "type": "string" },
+    "secondaryGlow": { "type": "string" },
+    "overlayRgb": { "type": ["string", "array"] },
+    "textColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "uiTextColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "uiMutedColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "sidebarEnhanceText": { "type": "boolean" },
+    "unifiedGlass": { "type": "boolean" },
+    "clearBackdrop": { "type": "boolean", "const": true },
+    "isOrnament": { "type": "boolean" },
+    "isLight": { "type": "boolean" },
+    "wallpaper": { "type": "string" },
+    "sticker": { "type": "string" },
+    "stickerW": { "type": "number" },
+    "stickerH": { "type": "number" },
+    "stickerTop": { "type": "number" },
+    "stickerRight": { "type": "number" },
+    "cornerSvg": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,10 @@
+dist/
+target/
+*.log
+*.bak
+theme_config.json
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+Thumbs.db

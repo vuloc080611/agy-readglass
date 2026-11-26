@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clearframe Studio — Readable Work-Session Glass Themes for Antigravity</title>
+  <style>
+    :root {
+      --studio-bg: #0b0d11;
+      --studio-panel: #12161d;
+      --studio-border: rgba(235, 231, 223, 0.12);
+      --studio-ink: #ebe7df;
+      --studio-muted: #9aa5b4;
+      --studio-accent: #e0a45a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--studio-bg);
+      color: var(--studio-ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+    .controls {
+      background: var(--studio-panel);
+      border-right: 1px solid var(--studio-border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+    h1 { font-size: 1.12rem; margin: 0; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.82rem; color: var(--studio-muted); margin: 2px 0 0; }
+    .section {
+      border: 1px solid var(--studio-border);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .section-title {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--studio-muted);
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    button, select, input[type="text"] {
+      font: inherit;
+      color: inherit;
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--studio-border);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.10); }
+    .btn.active {
+      border-color: var(--studio-accent);
+      background: rgba(224, 164, 90, 0.14);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+    }
+    .row:last-child { margin-bottom: 0; }
+    input[type="range"] { width: 145px; accent-color: var(--studio-accent); }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .metric {
+      border: 1px solid var(--studio-border);
+      border-radius: 7px;
+      padding: 6px 8px;
+      font-size: 0.76rem;
+    }
+    .metric .label { color: var(--studio-muted); display: block; font-size: 0.70rem; }
+    .metric .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .badge-pass { color: #3ecf8e; }
+    .badge-warn { color: #f5b971; }
+    .badge-fail { color: #f87171; }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: rgba(224, 164, 90, 0.18);
+      border-color: rgba(224, 164, 90, 0.45);
+      justify-content: center;
+      font-weight: 600;
+    }
+    .stage-wrap {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #080a0d;
+    }
+    .stage-note {
+      font-size: 0.78rem;
+      color: var(--studio-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .app-frame {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 620px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      display: grid;
+      grid-template-rows: 42px 1fr;
+      background-size: cover;
+      background-position: center;
+    }
+    .app-scrim {
+      position: relative;
+      grid-row: 1 / -1;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-rows: 42px 1fr;
+      z-index: 1;
+    }
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .app-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 578px;
+    }
+    @media (max-width: 720px) {
+      .app-body { grid-template-columns: 1fr; }
+    }
+    .app-sidebar {
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.83rem;
+    }
+    .sb-item {
+      padding: 7px 9px;
+      border-radius: 7px;
+      cursor: default;
+    }
+    .app-canvas {
+      padding: 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+    .user-bubble {
+      align-self: flex-end;
+      max-width: 78%;
+      padding: 12px 15px;
+      border-radius: 11px;
+      font-size: 0.88rem;
+    }
+    .ai-card {
+      position: relative;
+      padding: 15px 17px;
+      border-radius: 11px;
+      font-size: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .lantern-svg {
+      position: absolute;
+      top: -8px;
+      right: 16px;
+      pointer-events: none;
+    }
+    .code-box {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      overflow-x: auto;
+    }
+    .diff-add { background: rgba(62, 207, 142, 0.16); padding: 1px 4px; border-radius: 3px; display: block; }
+    .diff-del { background: rgba(239, 68, 68, 0.16); padding: 1px 4px; border-radius: 3px; display: block; }
+    .pills-row { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .bottom-grid {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+    @media (max-width: 720px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+    .composer, .modal-preview {
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.82rem;
+    }
+    .modal-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .mini-card {
+      padding: 7px 9px;
+      border-radius: 7px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+    .status-toast {
+      font-size: 0.76rem;
+      color: #3ecf8e;
+      min-height: 1.1em;
+    }
+    .sim-deutan { filter: url(#deutan-filter); }
+    .sim-protan { filter: url(#protan-filter); }
+    .sim-gray { filter: grayscale(100%); }
+    .sim-night { filter: sepia(26%) saturate(92%) brightness(95%); }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="deutan-filter">
+        <feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="protan-filter">
+        <feColorMatrix type="matrix" values="0.152 1.053 -0.205 0 0  0.115 0.786 0.099 0 0  -0.004 -0.048 1.052 0 0  0 0 0 1 0"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="layout">
+    <aside class="controls">
+      <div>
+        <h1>Clearframe Studio</h1>
+        <p class="subtitle">Test work-session presets, wallpapers, CVD &amp; live WCAG/APCA before installing.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">1. Work-Session Presets</div>
+        <div class="preset-grid" id="preset-buttons"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">2. Tweak Glass &amp; Accents</div>
+        <div class="row">
+          <span>Primary / Secondary</span>
+          <span>
+            <input type="color" id="pick-primary" />
+            <input type="color" id="pick-secondary" />
+          </span>
+        </div>
+        <div class="row">
+          <span>Sidebar Alpha (<span id="lbl-sb-a">0.78</span>)</span>
+          <input type="range" id="rng-sb-a" min="0.50" max="0.99" step="0.01" />
+        </div>
+        <div class="row">
+          <span>AI Card Alpha (<span id="lbl-ai-a">0.92</span>)</span>
+          <input type="range" id="rng-ai-a" min="0.50" max="0.99" step="0.01" />
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3. Wallpaper &amp; Vision Simulator</div>
+        <div class="row">
+          <input type="file" id="wp-upload" accept="image/*" style="font-size:0.75rem;max-width:210px;" />
+          <button class="btn" id="wp-clear" type="button">Clear</button>
+        </div>
+        <div class="row">
+          <span>Vision / Environment</span>
+          <select id="sim-mode" style="background:#0b0d11;border:1px solid var(--studio-border);border-radius:6px;padding:4px 6px;font-size:0.8rem;">
+            <option value="none">Normal Vision</option>
+            <option value="sim-deutan">Deuteranopia (CVD)</option>
+            <option value="sim-protan">Protanopia (CVD)</option>
+            <option value="sim-gray">Grayscale Separation</option>
+            <option value="sim-night">Night Light (3400K)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">4. Live WCAG 2.1 &amp; APCA Telemetry</div>
+        <div class="metrics-grid" id="metrics-grid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5. Export Ready-to-Use Configs</div>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-copy-pack" type="button">Copy pack.json</button>
+          <button class="btn" id="btn-dl-pack" type="button">Download .json</button>
+          <button class="btn" id="btn-copy-ide" type="button">Copy IDE Colors</button>
+          <button class="btn" id="btn-copy-prompt" type="button">Copy Skill Prompt</button>
+        </div>
+        <div class="status-toast" id="toast"></div>
+      </div>
+    </aside>
+
+    <main class="stage-wrap">
+      <div class="stage-note">
+        <span>Interactive Preview Studio (static simulation — apply real themes via <code>agy-theme build</code>)</span>
+        <span id="concept-display"></span>
+      </div>
+
+      <div class="app-frame" id="app-frame">
+        <div class="app-scrim" id="app-scrim">
+          <header class="app-header" id="app-header">
+            <span>Antigravity • Clearframe Preview</span>
+            <span id="header-meta" style="font-weight:400;font-size:0.76rem;">Session Active</span>
+          </header>
+
+          <div class="app-body">
+            <nav class="app-sidebar" id="app-sidebar">
+              <div style="font-weight:700;font-size:0.78rem;opacity:0.85;">WORKSPACES</div>
+              <div class="sb-item" id="sb-active">agy-readglass</div>
+              <div class="sb-item">contrast-audit</div>
+              <div class="sb-item">ide-color-sync</div>
+              <div style="margin-top:auto;font-size:0.75rem;" id="sb-muted">Muted metadata: 12px AA check</div>
+            </nav>
+
+            <section class="app-canvas" id="app-canvas">
+              <div class="user-bubble" id="user-bubble">
+                Kiểm tra giúp tôi khả năng đọc tiếng Việt có dấu (ệ, ợ, ẫ, ữ) và tách diff khi review PR ban đêm.
+              </div>
+
+              <div class="ai-card" id="ai-card">
+                <svg id="lantern-mark" class="lantern-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 36" width="28" height="36" fill="none" style="display:none;">
+                  <line x1="14" y1="1.5" x2="14" y2="5.5" stroke="#e8a15a" stroke-width="1.35" stroke-linecap="round"/>
+                  <rect x="9.5" y="5.5" width="9" height="2.4" rx="1.2" stroke="#e8a15a" stroke-width="1.25"/>
+                  <rect x="5" y="8" width="18" height="19" rx="7" stroke="#e8a15a" stroke-width="1.35"/>
+                  <ellipse cx="14" cy="17.5" rx="4.2" ry="9.3" stroke="#e8a15a" stroke-width="1.05" stroke-opacity="0.65"/>
+                  <line x1="5.4" y1="17.5" x2="22.6" y2="17.5" stroke="#e8a15a" stroke-width="1" stroke-opacity="0.45"/>
+                  <rect x="10" y="27" width="8" height="2.2" rx="1.1" stroke="#e8a15a" stroke-width="1.25"/>
+                  <line x1="14" y1="29.4" x2="14" y2="34.2" stroke="#e8a15a" stroke-width="1.25" stroke-linecap="round" stroke-opacity="0.8"/>
+                </svg>
+
+                <div style="font-weight:700;" id="ai-title">AI Card • Readability Verified</div>
+                <div>
+                  Bề mặt thẻ AI sử dụng độ đục cân bằng trên <code>overlayRgb</code> giúp chữ dấu tiếng Việt sắc nét không bị quầng sáng (halation).
+                </div>
+                <div class="code-box" id="code-box">
+                  <span class="diff-del">- background: rgba(18, 22, 28, 0.35); /* FAIL 2.9:1 */</span>
+                  <span class="diff-add">+ background: rgba(18, 22, 28, 0.86); /* PASS 15.2:1 */</span>
+                </div>
+                <div class="pills-row">
+                  <span class="pill" id="pill-1">WCAG AAA Ready</span>
+                  <span class="pill" id="pill-2">APCA Checked</span>
+                  <span class="pill" id="pill-3">No Blur Lag</span>
+                </div>
+                <div style="font-size:0.75rem;" id="ai-muted">Timestamp 15:58 • Muted text contrast check</div>
+              </div>
+
+              <div class="bottom-grid">
+                <div class="composer" id="composer">
+                  <div style="font-size:0.75rem;margin-bottom:6px;" id="comp-muted">Composer (inputCardBg)</div>
+                  <div>Ask Antigravity to switch session or scaffold from a photo...</div>
+                </div>
+                <div class="modal-preview" id="modal-preview">
+                  <div style="font-weight:700;font-size:0.78rem;" id="modal-hdr">Theme Studio Modal (AAA >= 7:1)</div>
+                  <div class="modal-cards">
+                    <div class="mini-card" id="mini-card-unselected">Unselected</div>
+                    <div class="mini-card" id="mini-card-selected">Selected</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /* CLEARFRAME_PRESETS_START */
+    const INITIAL_PRESETS = {
+  "Deep Ink": {
+    "concept": "Deep work • mực gần đen, một vệt amber, không sticker • AA",
+    "primary": "#e0a45a",
+    "secondary": "#93a0b0",
+    "glow": "rgba(224, 164, 90, 0.14)",
+    "secondaryGlow": "rgba(147, 160, 176, 0.10)",
+    "overlayRgb": "10, 12, 16",
+    "textColor": "#ebe7df",
+    "uiTextColor": "#ebe7df",
+    "uiMutedColor": "#b7c0cc",
+    "bg": "linear-gradient(145deg, rgba(20, 24, 30, 0.94) 0%, rgba(14, 16, 20, 0.94) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(224, 164, 90, 0.55) 0%, rgba(147, 160, 176, 0.35) 100%)",
+    "borderColor": "rgba(224, 164, 90, 0.28)",
+    "innerBorder": "1px solid rgba(235, 231, 223, 0.08)",
+    "sidebarBg": "rgba(12, 14, 18, 0.78)",
+    "sidebarHoverBg": "rgba(224, 164, 90, 0.12)",
+    "sidebarEnhanceText": false,
+    "aiCardBg": "rgba(14, 16, 20, 0.92)",
+    "aiCardBorder": "rgba(235, 231, 223, 0.08)",
+    "headerBg": "rgba(12, 14, 18, 0.80)",
+    "headerBorder": "rgba(235, 231, 223, 0.08)",
+    "unifiedGlass": false,
+    "btnBg": "rgba(20, 24, 30, 0.90)",
+    "inputGlassBg": "rgba(14, 16, 20, 0.90)",
+    "inputCardBg": "linear-gradient(145deg, rgba(20, 24, 30, 0.94) 0%, rgba(14, 16, 20, 0.94) 100%)",
+    "modalBg": "rgba(16, 18, 22, 0.98)",
+    "modalHeaderBg": "rgba(20, 22, 26, 0.98)",
+    "cardBg": "rgba(18, 20, 24, 0.94)",
+    "cardSelectedBg": "rgba(46, 40, 31, 0.96)",
+    "pureBg": "radial-gradient(1200px 600px at 50% 100%, rgba(224, 164, 90, 0.08), transparent 55%), #0c0e12",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": false,
+    "isLight": false,
+    "pillBg": "rgba(20, 24, 30, 0.90)",
+    "pillTextColor": "#ebe7df",
+    "pillBorder": "rgba(235, 231, 223, 0.10)",
+    "pillHoverBg": "rgba(224, 164, 90, 0.16)"
+  },
+  "Review Split": {
+    "concept": "Review • bubble của bạn ấm, thẻ AI lạnh • AA",
+    "primary": "#d4a574",
+    "secondary": "#8aa4b8",
+    "glow": "rgba(212, 165, 116, 0.10)",
+    "secondaryGlow": "rgba(138, 164, 184, 0.10)",
+    "overlayRgb": "14, 16, 20",
+    "textColor": "#ede6da",
+    "uiTextColor": "#ebe7df",
+    "uiMutedColor": "#c5ced6",
+    "bg": "linear-gradient(145deg, rgba(56, 42, 30, 0.94) 0%, rgba(42, 33, 25, 0.94) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(212, 165, 116, 0.50) 0%, rgba(138, 164, 184, 0.28) 100%)",
+    "borderColor": "rgba(212, 165, 116, 0.42)",
+    "innerBorder": "1px solid rgba(237, 230, 218, 0.10)",
+    "sidebarBg": "rgba(16, 18, 22, 0.86)",
+    "sidebarHoverBg": "rgba(138, 164, 184, 0.14)",
+    "sidebarEnhanceText": false,
+    "aiCardBg": "rgba(13, 20, 28, 0.96)",
+    "aiCardBorder": "rgba(138, 164, 184, 0.22)",
+    "headerBg": "rgba(16, 18, 22, 0.90)",
+    "headerBorder": "rgba(138, 164, 184, 0.16)",
+    "unifiedGlass": false,
+    "btnBg": "rgba(28, 32, 38, 0.92)",
+    "inputGlassBg": "rgba(22, 24, 28, 0.92)",
+    "inputCardBg": "linear-gradient(145deg, rgba(46, 36, 28, 0.94) 0%, rgba(22, 24, 28, 0.94) 100%)",
+    "modalBg": "rgba(18, 20, 24, 0.98)",
+    "modalHeaderBg": "rgba(22, 26, 32, 0.98)",
+    "cardBg": "rgba(20, 24, 28, 0.94)",
+    "cardSelectedBg": "rgba(38, 48, 58, 0.96)",
+    "pureBg": "#10141a",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": false,
+    "isLight": false,
+    "pillBg": "rgba(22, 26, 32, 0.92)",
+    "pillTextColor": "#ebe7df",
+    "pillBorder": "rgba(138, 164, 184, 0.28)",
+    "pillHoverBg": "rgba(138, 164, 184, 0.16)"
+  },
+  "Lantern Hour": {
+    "concept": "Tối ấm • amber đèn lồng trên than, không neon • AA",
+    "primary": "#e8a15a",
+    "secondary": "#c47a55",
+    "glow": "rgba(232, 161, 90, 0.16)",
+    "secondaryGlow": "rgba(196, 122, 85, 0.10)",
+    "overlayRgb": "18, 12, 10",
+    "textColor": "#efe6d8",
+    "uiTextColor": "#efe6d8",
+    "uiMutedColor": "#d2c4b4",
+    "bg": "linear-gradient(145deg, rgba(42, 28, 20, 0.94) 0%, rgba(24, 16, 12, 0.94) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(232, 161, 90, 0.55) 0%, rgba(196, 122, 85, 0.30) 100%)",
+    "borderColor": "rgba(232, 161, 90, 0.30)",
+    "innerBorder": "1px solid rgba(239, 230, 216, 0.08)",
+    "sidebarBg": "rgba(22, 14, 12, 0.84)",
+    "sidebarHoverBg": "rgba(232, 161, 90, 0.14)",
+    "sidebarEnhanceText": true,
+    "aiCardBg": "rgba(26, 16, 12, 0.94)",
+    "aiCardBorder": "rgba(232, 161, 90, 0.16)",
+    "headerBg": "rgba(22, 14, 12, 0.86)",
+    "headerBorder": "rgba(232, 161, 90, 0.14)",
+    "unifiedGlass": true,
+    "sidebarBlur": "2px",
+    "headerBlur": "2px",
+    "btnBg": "rgba(36, 24, 18, 0.90)",
+    "inputGlassBg": "rgba(28, 18, 14, 0.90)",
+    "inputCardBg": "linear-gradient(145deg, rgba(38, 25, 18, 0.94) 0%, rgba(24, 16, 12, 0.94) 100%)",
+    "modalBg": "rgba(24, 16, 12, 0.98)",
+    "modalHeaderBg": "rgba(32, 22, 16, 0.98)",
+    "cardBg": "rgba(28, 18, 14, 0.94)",
+    "cardSelectedBg": "rgba(54, 36, 24, 0.96)",
+    "pureBg": "radial-gradient(900px 480px at 80% 100%, rgba(232, 161, 90, 0.10), transparent 60%), #140e0c",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": true,
+    "isLight": false,
+    "sticker": "assets/lantern-mark.svg",
+    "stickerW": 28,
+    "stickerH": 36,
+    "stickerTop": -8,
+    "stickerRight": 16,
+    "cornerSvg": "",
+    "pillBg": "rgba(36, 24, 18, 0.90)",
+    "pillTextColor": "#efe6d8",
+    "pillBorder": "rgba(232, 161, 90, 0.24)",
+    "pillHoverBg": "rgba(232, 161, 90, 0.16)"
+  },
+  "Mekong Morning": {
+    "concept": "Ban ngày • giấy sương và mực, không trắng lạnh • AA",
+    "primary": "#1f6b45",
+    "secondary": "#8d5a2b",
+    "glow": "rgba(31, 107, 69, 0.12)",
+    "secondaryGlow": "rgba(141, 90, 43, 0.10)",
+    "overlayRgb": "244, 241, 234",
+    "textColor": "#1c1915",
+    "uiTextColor": "#1c1915",
+    "uiMutedColor": "#5c564c",
+    "bg": "linear-gradient(145deg, rgba(255, 252, 246, 0.94) 0%, rgba(236, 242, 236, 0.94) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(31, 107, 69, 0.45) 0%, rgba(141, 90, 43, 0.28) 100%)",
+    "borderColor": "rgba(31, 107, 69, 0.28)",
+    "innerBorder": "1px solid rgba(28, 25, 21, 0.08)",
+    "sidebarBg": "rgba(244, 241, 234, 0.88)",
+    "sidebarHoverBg": "rgba(31, 107, 69, 0.10)",
+    "sidebarEnhanceText": false,
+    "aiCardBg": "rgba(255, 252, 246, 0.94)",
+    "aiCardBorder": "rgba(28, 25, 21, 0.08)",
+    "headerBg": "rgba(244, 241, 234, 0.90)",
+    "headerBorder": "rgba(28, 25, 21, 0.08)",
+    "unifiedGlass": false,
+    "btnBg": "rgba(255, 252, 246, 0.90)",
+    "inputGlassBg": "rgba(255, 252, 246, 0.90)",
+    "inputCardBg": "linear-gradient(145deg, rgba(255, 252, 246, 0.94) 0%, rgba(236, 242, 236, 0.94) 100%)",
+    "modalBg": "rgba(255, 252, 246, 0.98)",
+    "modalHeaderBg": "rgba(244, 241, 234, 0.98)",
+    "cardBg": "rgba(255, 252, 246, 0.94)",
+    "cardSelectedBg": "rgba(222, 236, 226, 0.96)",
+    "pureBg": "linear-gradient(180deg, #f7f4ee 0%, #e7efe8 100%)",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": false,
+    "isLight": true,
+    "pillBg": "rgba(255, 252, 246, 0.94)",
+    "pillTextColor": "#1c1915",
+    "pillBorder": "rgba(28, 25, 21, 0.12)",
+    "pillHoverBg": "rgba(31, 107, 69, 0.10)"
+  },
+  "Screenshot Clean": {
+    "concept": "Chụp màn hình • trung tính, không sticker, không glow • AA",
+    "primary": "#9aa3b2",
+    "secondary": "#6b7280",
+    "glow": "rgba(154, 163, 178, 0.06)",
+    "secondaryGlow": "rgba(107, 114, 128, 0.05)",
+    "overlayRgb": "14, 15, 18",
+    "textColor": "#e9e9e7",
+    "uiTextColor": "#e9e9e7",
+    "uiMutedColor": "#b8b8be",
+    "bg": "linear-gradient(145deg, rgba(28, 30, 34, 0.96) 0%, rgba(20, 21, 24, 0.96) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(154, 163, 178, 0.35) 0%, rgba(80, 84, 92, 0.25) 100%)",
+    "borderColor": "rgba(233, 233, 231, 0.14)",
+    "innerBorder": "1px solid rgba(233, 233, 231, 0.08)",
+    "sidebarBg": "rgba(16, 17, 20, 0.94)",
+    "sidebarHoverBg": "rgba(233, 233, 231, 0.06)",
+    "sidebarEnhanceText": false,
+    "aiCardBg": "rgba(18, 19, 22, 0.97)",
+    "aiCardBorder": "rgba(233, 233, 231, 0.08)",
+    "headerBg": "rgba(16, 17, 20, 0.96)",
+    "headerBorder": "rgba(233, 233, 231, 0.08)",
+    "unifiedGlass": false,
+    "btnBg": "rgba(28, 30, 34, 0.96)",
+    "inputGlassBg": "rgba(20, 21, 24, 0.96)",
+    "inputCardBg": "linear-gradient(145deg, rgba(28, 30, 34, 0.96) 0%, rgba(20, 21, 24, 0.96) 100%)",
+    "modalBg": "rgba(16, 17, 20, 0.99)",
+    "modalHeaderBg": "rgba(22, 23, 26, 0.99)",
+    "cardBg": "rgba(22, 23, 26, 0.97)",
+    "cardSelectedBg": "rgba(44, 46, 54, 0.98)",
+    "pureBg": "#0e0f12",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": false,
+    "isLight": false,
+    "pillBg": "rgba(28, 30, 34, 0.96)",
+    "pillTextColor": "#e9e9e7",
+    "pillBorder": "rgba(233, 233, 231, 0.14)",
+    "pillHoverBg": "rgba(233, 233, 231, 0.08)"
+  },
+  "Delta Mint": {
+    "concept": "Một accent • mint trầm trên than trung tính • AA",
+    "primary": "#3ecf8e",
+    "secondary": "#8aa0b4",
+    "glow": "rgba(62, 207, 142, 0.14)",
+    "secondaryGlow": "rgba(138, 160, 180, 0.08)",
+    "overlayRgb": "10, 14, 13",
+    "textColor": "#e5ede9",
+    "uiTextColor": "#e5ede9",
+    "uiMutedColor": "#b2c1ba",
+    "bg": "linear-gradient(145deg, rgba(16, 28, 24, 0.94) 0%, rgba(12, 16, 15, 0.94) 100%)",
+    "frameBg": "linear-gradient(135deg, rgba(62, 207, 142, 0.45) 0%, rgba(138, 160, 180, 0.22) 100%)",
+    "borderColor": "rgba(62, 207, 142, 0.28)",
+    "innerBorder": "1px solid rgba(229, 237, 233, 0.08)",
+    "sidebarBg": "rgba(10, 16, 14, 0.86)",
+    "sidebarHoverBg": "rgba(62, 207, 142, 0.12)",
+    "sidebarEnhanceText": false,
+    "aiCardBg": "rgba(12, 18, 16, 0.94)",
+    "aiCardBorder": "rgba(62, 207, 142, 0.16)",
+    "headerBg": "rgba(10, 16, 14, 0.88)",
+    "headerBorder": "rgba(62, 207, 142, 0.12)",
+    "unifiedGlass": false,
+    "btnBg": "rgba(16, 26, 22, 0.92)",
+    "inputGlassBg": "rgba(12, 18, 16, 0.92)",
+    "inputCardBg": "linear-gradient(145deg, rgba(16, 28, 24, 0.94) 0%, rgba(12, 16, 15, 0.94) 100%)",
+    "modalBg": "rgba(12, 16, 15, 0.98)",
+    "modalHeaderBg": "rgba(16, 24, 21, 0.98)",
+    "cardBg": "rgba(14, 20, 18, 0.94)",
+    "cardSelectedBg": "rgba(22, 46, 37, 0.96)",
+    "pureBg": "#0c100f",
+    "wallpaper": "",
+    "clearBackdrop": true,
+    "isOrnament": false,
+    "isLight": false,
+    "pillBg": "rgba(16, 26, 22, 0.92)",
+    "pillTextColor": "#e5ede9",
+    "pillBorder": "rgba(62, 207, 142, 0.24)",
+    "pillHoverBg": "rgba(62, 207, 142, 0.14)"
+  }
+};
+    /* CLEARFRAME_PRESETS_END */
+
+    let currentName = Object.keys(INITIAL_PRESETS)[0] || "Deep Ink";
+    let state = JSON.parse(JSON.stringify(INITIAL_PRESETS[currentName] || {}));
+    let wallpaperUrl = "";
+
+    function parseOverlay(str) {
+      const p = String(str).split(",").map(v => parseFloat(v.trim()));
+      return p.length === 3 ? p : [10, 12, 16];
+    }
+
+    function parseRgba(str, fallback = [16, 18, 22, 0.92]) {
+      if (!str) return fallback;
+      const s = str.trim();
+      if (s.startsWith("#")) {
+        const h = s.slice(1);
+        return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16), 1];
+      }
+      const m = s.match(/rgba?\(([^)]+)\)/i);
+      if (!m) return fallback;
+      const parts = m[1].split(",").map(v => parseFloat(v.trim()));
+      return [parts[0]||0, parts[1]||0, parts[2]||0, parts.length > 3 ? parts[3] : 1];
+    }
+
+    function setAlpha(str, a) {
+      const [r, g, b] = parseRgba(str);
+      return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a.toFixed(2)})`;
+    }
+
+    function blendOver(rgba, ov) {
+      const a = rgba[3];
+      return [a*rgba[0]+(1-a)*ov[0], a*rgba[1]+(1-a)*ov[1], a*rgba[2]+(1-a)*ov[2]];
+    }
+
+    function relLum(rgb) {
+      const f = c => {
+        const s = Math.max(0, Math.min(255, c)) / 255;
+        return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126*f(rgb[0]) + 0.7152*f(rgb[1]) + 0.0722*f(rgb[2]);
+    }
+
+    function ratio(c1, c2) {
+      const l1 = relLum(c1), l2 = relLum(c2);
+      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    }
+
+    function apcaLc(txt, bg) {
+      const sy = rgb => {
+        const y = 0.2126729*Math.pow(rgb[0]/255,2.4) + 0.7151522*Math.pow(rgb[1]/255,2.4) + 0.0721750*Math.pow(rgb[2]/255,2.4);
+        return y < 0.022 ? y + Math.pow(0.022 - y, 1.414) : y;
+      };
+      const yt = sy(txt), yb = sy(bg);
+      if (Math.abs(yb - yt) < 0.0005) return 0;
+      const sapc = yb > yt ? (Math.pow(yb,0.56)-Math.pow(yt,0.57))*1.14 : (Math.pow(yb,0.65)-Math.pow(yt,0.62))*1.14;
+      if (Math.abs(sapc) < 0.1) return 0;
+      return (sapc > 0 ? sapc - 0.027 : sapc + 0.027) * 100;
+    }
+
+    function selectPreset(name) {
+      currentName = name;
+      state = JSON.parse(JSON.stringify(INITIAL_PRESETS[name]));
+      document.querySelectorAll("#preset-buttons .btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.name === name);
+      });
+      document.getElementById("pick-primary").value = state.primary;
+      document.getElementById("pick-secondary").value = state.secondary;
+      document.getElementById("rng-sb-a").value = parseRgba(state.sidebarBg)[3];
+      document.getElementById("rng-ai-a").value = parseRgba(state.aiCardBg)[3];
+      render();
+    }
+
+    function render() {
+      const ov = parseOverlay(state.overlayRgb);
+      const sbA = parseRgba(state.sidebarBg)[3];
+      const aiA = parseRgba(state.aiCardBg)[3];
+      document.getElementById("lbl-sb-a").textContent = sbA.toFixed(2);
+      document.getElementById("lbl-ai-a").textContent = aiA.toFixed(2);
+      document.getElementById("concept-display").textContent = state.concept;
+
+      const frame = document.getElementById("app-frame");
+      frame.style.background = wallpaperUrl
+        ? `url("${wallpaperUrl}") center / cover no-repeat`
+        : (state.pureBg || `rgb(${state.overlayRgb})`);
+
+      const hdr = document.getElementById("app-header");
+      hdr.style.background = state.headerBg;
+      hdr.style.color = state.uiTextColor;
+      hdr.style.borderBottom = `1px solid ${state.headerBorder}`;
+      document.getElementById("header-meta").style.color = state.uiMutedColor;
+
+      const sb = document.getElementById("app-sidebar");
+      sb.style.background = state.sidebarBg;
+      sb.style.color = state.uiTextColor;
+      sb.style.borderRight = `1px solid ${state.aiCardBorder}`;
+      document.getElementById("sb-active").style.background = state.sidebarHoverBg;
+      document.getElementById("sb-muted").style.color = state.uiMutedColor;
+
+      const ub = document.getElementById("user-bubble");
+      ub.style.background = state.bg;
+      ub.style.color = state.textColor;
+      ub.style.border = `1px solid ${state.borderColor}`;
+
+      const ai = document.getElementById("ai-card");
+      ai.style.background = state.aiCardBg;
+      ai.style.color = state.uiTextColor;
+      ai.style.border = `1px solid ${state.aiCardBorder}`;
+      document.getElementById("ai-muted").style.color = state.uiMutedColor;
+      document.getElementById("lantern-mark").style.display = state.isOrnament ? "block" : "none";
+
+      const codeBox = document.getElementById("code-box");
+      codeBox.style.background = `rgba(${state.overlayRgb}, 0.85)`;
+      codeBox.style.border = state.innerBorder;
+
+      [1,2,3].forEach(i => {
+        const el = document.getElementById(`pill-${i}`);
+        el.style.background = state.pillBg;
+        el.style.color = state.pillTextColor;
+        el.style.border = `1px solid ${state.pillBorder}`;
+      });
+
+      const comp = document.getElementById("composer");
+      comp.style.background = state.inputCardBg;
+      comp.style.color = state.textColor;
+      comp.style.border = `1px solid ${state.borderColor}`;
+      document.getElementById("comp-muted").style.color = state.uiMutedColor;
+
+      const mod = document.getElementById("modal-preview");
+      mod.style.background = state.modalBg;
+      mod.style.color = state.uiTextColor;
+      mod.style.border = `1px solid ${state.aiCardBorder}`;
+      document.getElementById("mini-card-unselected").style.background = state.cardBg;
+      const sel = document.getElementById("mini-card-selected");
+      sel.style.background = state.cardSelectedBg;
+      sel.style.border = `1px solid ${state.primary}`;
+
+      // Live WCAG & APCA Metrics
+      const uiInk = parseRgba(state.uiTextColor);
+      const txtInk = parseRgba(state.textColor);
+      const mutedInk = parseRgba(state.uiMutedColor);
+      const sbBlend = blendOver(parseRgba(state.sidebarBg), ov);
+      const aiBlend = blendOver(parseRgba(state.aiCardBg), ov);
+      const mdBlend = blendOver(parseRgba(state.modalBg), ov);
+      const bgBlend = blendOver(parseRgba(state.bg), ov);
+
+      const items = [
+        ["Sidebar (>=4.5)", ratio(uiInk, sbBlend), apcaLc(uiInk, sbBlend), 4.5],
+        ["AI Card (>=4.5)", ratio(uiInk, aiBlend), apcaLc(uiInk, aiBlend), 4.5],
+        ["Modal (>=7.0)", ratio(uiInk, mdBlend), apcaLc(uiInk, mdBlend), 7.0],
+        ["User Bubble", ratio(txtInk, bgBlend), apcaLc(txtInk, bgBlend), 4.5],
+        ["Muted AI (>=4.5)", ratio(mutedInk, aiBlend), apcaLc(mutedInk, aiBlend), 4.5],
+        ["Glow Alpha <=0.18", parseRgba(state.glow)[3], null, 0.18, true],
+      ];
+
+      const grid = document.getElementById("metrics-grid");
+      grid.innerHTML = items.map(([lbl, val, lc, limit, isMax]) => {
+        const ok = isMax ? val <= limit : val >= limit;
+        const cls = ok ? "badge-pass" : "badge-fail";
+        const formatted = isMax ? `${val.toFixed(2)}` : `${val.toFixed(2)}:1`;
+        const apcaStr = lc !== null ? ` • Lc ${lc > 0 ? "+" : ""}${lc.toFixed(0)}` : "";
+        return `<div class="metric"><span class="label">${lbl}</span><span class="val ${cls}">${formatted}${apcaStr}</span></div>`;
+      }).join("");
+    }
+
+    // Build preset buttons
+    const btnWrap = document.getElementById("preset-buttons");
+    Object.keys(INITIAL_PRESETS).forEach(name => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn";
+      btn.dataset.name = name;
+      btn.innerHTML = `<span class="dot" style="background:${INITIAL_PRESETS[name].primary}"></span><span>${name}</span>`;
+      btn.onclick = () => selectPreset(name);
+      btnWrap.appendChild(btn);
+    });
+
+    document.getElementById("pick-primary").oninput = e => { state.primary = e.target.value; render(); };
+    document.getElementById("pick-secondary").oninput = e => { state.secondary = e.target.value; render(); };
+    document.getElementById("rng-sb-a").oninput = e => { state.sidebarBg = setAlpha(state.sidebarBg, parseFloat(e.target.value)); render(); };
+    document.getElementById("rng-ai-a").oninput = e => { state.aiCardBg = setAlpha(state.aiCardBg, parseFloat(e.target.value)); render(); };
+
+    document.getElementById("sim-mode").onchange = e => {
+      const frame = document.getElementById("app-frame");
+      frame.className = "app-frame" + (e.target.value !== "none" ? " " + e.target.value : "");
+    };
+
+    document.getElementById("wp-upload").onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (wallpaperUrl) URL.revokeObjectURL(wallpaperUrl);
+      wallpaperUrl = URL.createObjectURL(file);
+      state.wallpaper = file.name;
+      state.sidebarEnhanceText = true;
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas");
+        c.width = 40; c.height = 24;
+        const ctx = c.getContext("2d");
+        ctx.drawImage(img, 0, 0, 40, 24);
+        const data = ctx.getImageData(0, 0, 40, 24).data;
+        let r=0, g=0, b=0, n=data.length/4;
+        for (let i=0; i<data.length; i+=4) { r+=data[i]; g+=data[i+1]; b+=data[i+2]; }
+        state.overlayRgb = `${Math.round(r/n)}, ${Math.round(g/n)}, ${Math.round(b/n)}`;
+        render();
+      };
+      img.src = wallpaperUrl;
+    };
+
+    document.getElementById("wp-clear").onclick = () => {
+      if (wallpaperUrl) URL.revokeObjectURL(wallpaperUrl);
+      wallpaperUrl = "";
+      state.wallpaper = "";
+      state.overlayRgb = INITIAL_PRESETS[currentName].overlayRgb;
+      state.sidebarEnhanceText = INITIAL_PRESETS[currentName].sidebarEnhanceText;
+      document.getElementById("wp-upload").value = "";
+      render();
+    };
+
+    function notify(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      setTimeout(() => { if (t.textContent === msg) t.textContent = ""; }, 2600);
+    }
+
+    document.getElementById("btn-copy-pack").onclick = async () => {
+      const obj = { name: currentName, ...state };
+      await navigator.clipboard.writeText(JSON.stringify(obj, null, 2));
+      notify("Copied pack.json to clipboard!");
+    };
+
+    document.getElementById("btn-dl-pack").onclick = () => {
+      const obj = { name: currentName, ...state };
+      const blob = new Blob([JSON.stringify(obj, null, 2) + "\n"], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = currentName.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".json";
+      a.click();
+      notify("Downloaded pack JSON!");
+    };
+
+    document.getElementById("btn-copy-ide").onclick = async () => {
+      const ov = parseOverlay(state.overlayRgb);
+      const hex = arr => "#" + arr.map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
+      const ide = {
+        "workbench.colorCustomizations": {
+          "focusBorder": state.primary,
+          "editor.background": hex(blendOver(parseRgba(state.aiCardBg), ov)),
+          "editor.foreground": state.uiTextColor,
+          "sideBar.background": hex(blendOver(parseRgba(state.sidebarBg), ov)),
+          "sideBar.foreground": state.uiTextColor,
+          "scrollbarSlider.background": state.uiTextColor + "59"
+        }
+      };
+      await navigator.clipboard.writeText(JSON.stringify(ide, null, 2));
+      notify("Copied IDE workbench.colorCustomizations!");
+    };
+
+    document.getElementById("btn-copy-prompt").onclick = async () => {
+      await navigator.clipboard.writeText(`Switch my Antigravity theme to "${currentName}" using clearframe-theme and verify WCAG AA/APCA.`);
+      notify("Copied agent prompt!");
+    };
+
+    selectPreset(currentName);
+  </script>
+</body>
+</html>
