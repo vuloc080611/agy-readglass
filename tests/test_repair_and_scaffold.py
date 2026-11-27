@@ -14,10 +14,12 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from audit_repair import repair_preset  # noqa: E402
 from clearframe_core.contrast_lib import audit_preset  # noqa: E402
+from clearframe_core.env_paths import detect_antigravity_paths  # noqa: E402
 from clearframe_core.schema_validator import validate_themes_collection  # noqa: E402
 from export_ide_sync import build_ide_customizations  # noqa: E402
 from install_pack import install_pack  # noqa: E402
 from scaffold_theme import scaffold_preset  # noqa: E402
+from shift_preset import promote_preset, resolve_preset_for_time  # noqa: E402
 from sync_packs import build_themes_payload  # noqa: E402
 
 
@@ -101,6 +103,39 @@ class TestPresetsAndTools(unittest.TestCase):
         self.assertIn("scrollbarSlider.background", wc)
         self.assertEqual(wc["diffEditor.insertedTextBackground"], "#3b82f62e")
         self.assertEqual(wc["diffEditor.removedTextBackground"], "#e08b3a30")
+
+    def test_shift_preset_circadian_and_backup(self) -> None:
+        self.assertEqual(resolve_preset_for_time(9, 15), "Mekong Morning")
+        self.assertEqual(resolve_preset_for_time(18, 0), "Deep Ink")
+        self.assertEqual(resolve_preset_for_time(22, 45), "Lantern Hour")
+        self.assertEqual(resolve_preset_for_time(2, 0), "Lantern Hour")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "themes.json"
+            themes = json.loads((ROOT / "themes" / "themes.json").read_text(encoding="utf-8"))
+            target.write_text(json.dumps(themes, indent=2), encoding="utf-8")
+
+            dry = promote_preset(target, "Review Split", dry_run=True)
+            self.assertTrue(dry["changed"])
+            self.assertFalse((Path(tmp) / "themes.json.bak").exists())
+
+            res = promote_preset(target, "Review Split", dry_run=False)
+            self.assertTrue(res["changed"])
+            self.assertTrue((Path(tmp) / "themes.json.bak").exists())
+            reordered = json.loads(target.read_text(encoding="utf-8"))
+            self.assertEqual(list(reordered.keys())[0], "Review Split")
+            self.assertEqual(len(reordered), 6)
+
+    def test_detect_antigravity_paths_cross_platform(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            win_appdata = base / "AppData" / "Roaming"
+            win_settings = win_appdata / "Antigravity" / "User" / "settings.json"
+            win_settings.parent.mkdir(parents=True)
+            win_settings.write_text("{}", encoding="utf-8")
+            paths = detect_antigravity_paths(system="Windows", home=base, env={"APPDATA": str(win_appdata)})
+            self.assertTrue(paths["ideSettings"]["exists"])
+            self.assertFalse(paths["cliSettings"]["exists"])
 
 
 if __name__ == "__main__":

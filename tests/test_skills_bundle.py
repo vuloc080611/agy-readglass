@@ -120,6 +120,36 @@ class TestSkillBundles(unittest.TestCase):
             self.assertEqual(proc4.returncode, 0, proc4.stderr)
             self.assertIn("workbench.colorCustomizations", proc4.stdout)
 
+            # Verify --detect-settings and isolated shift_preset.py
+            proc5 = subprocess.run(
+                [sys.executable, str(isolated_ide / "scripts" / "export_ide_sync.py"), "--detect-settings"],
+                cwd=tmp,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(proc5.returncode, 0, proc5.stderr)
+            self.assertIn("ideSettings:", proc5.stdout)
+
+            themes_copy = Path(tmp) / "themes.json"
+            themes_copy.write_text((ROOT / "themes" / "themes.json").read_text(encoding="utf-8"), encoding="utf-8")
+            proc6 = subprocess.run(
+                [
+                    sys.executable,
+                    str(isolated_skill / "scripts" / "shift_preset.py"),
+                    "--shift",
+                    "night",
+                    "--target",
+                    str(themes_copy),
+                ],
+                cwd=tmp,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(proc6.returncode, 0, proc6.stderr)
+            self.assertEqual(list(json.loads(themes_copy.read_text(encoding="utf-8")).keys())[0], "Lantern Hour")
+
 
 if __name__ == "__main__":
     unittest.main()

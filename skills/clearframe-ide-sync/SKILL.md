@@ -22,6 +22,7 @@ Align editor panes, sidebars, tabs, terminal, scrollbars, and diffs with the act
    ```
    - Add `--cvd-safe` if the user wants color-vision-deficiency friendly Blue/Amber diff backgrounds instead of Green/Red.
    - Add `--scope "<Current Color Theme>"` if the user only wants overrides applied under a specific base theme.
+   - Add `--detect-settings` to inspect standard Windows/macOS/Linux `settings.json` paths without modifying anything.
 3. **Safe delivery:** Output the generated `"workbench.colorCustomizations"` JSON snippet for the user to paste into User Settings (`settings.json`). Only run `--apply <path-to-settings.json>` (which creates a `.bak` backup and refuses files with JSONC comments) if the user explicitly asks to write to disk.
 
 ## Safety Rules

@@ -26,6 +26,7 @@ try:
         rgb_to_hex,
         srgb_to_oklch,
     )
+    from env_paths import detect_antigravity_paths  # type: ignore[import-not-found]
 except ImportError:
     from clearframe_core.contrast_lib import (
         blend_over,
@@ -37,6 +38,7 @@ except ImportError:
         rgb_to_hex,
         srgb_to_oklch,
     )
+    from clearframe_core.env_paths import detect_antigravity_paths
 
 
 def _solid_hex(css_val: str, overlay: tuple[float, float, float]) -> str:
@@ -156,8 +158,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--file", type=Path, default=None, help="Path to pack.json or themes.json")
     parser.add_argument("--cvd-safe", action="store_true", help="Use Blue/Amber diff highlights for CVD")
     parser.add_argument("--scope", default=None, help="Optional VS Code theme scope name, e.g. 'Default Dark Modern'")
+    parser.add_argument("--detect-settings", action="store_true", help="Print standard Antigravity settings paths")
     parser.add_argument("--apply", type=Path, default=None, help="Safely merge into target settings.json (with .bak)")
     args = parser.parse_args(argv)
+
+    if args.detect_settings:
+        paths = detect_antigravity_paths()
+        print("Detected standard Antigravity settings paths (read-only):")
+        for key in ("ideSettings", "cliSettings"):
+            info = paths[key]
+            print(f"  {key}: {info['path']} (exists={info['exists']})")
+        if not args.preset and not args.file and not args.apply:
+            return 0
 
     try:
         name, body = _load_single_preset(args.preset, args.file)

@@ -23,6 +23,7 @@ SKILL_BUNDLES: dict[str, dict[str, list[tuple[Path, str]]]] = {
             (ROOT / "tools" / "scaffold_theme.py", "scaffold_theme.py"),
             (ROOT / "tools" / "analyze_wallpaper.py", "analyze_wallpaper.py"),
             (ROOT / "tools" / "install_pack.py", "install_pack.py"),
+            (ROOT / "tools" / "shift_preset.py", "shift_preset.py"),
         ],
         "references": [
             (ROOT / "references" / "contrast.md", "contrast.md"),
@@ -44,6 +45,7 @@ SKILL_BUNDLES: dict[str, dict[str, list[tuple[Path, str]]]] = {
     "clearframe-ide-sync": {
         "scripts": [
             (ROOT / "src" / "clearframe_core" / "contrast_lib.py", "contrast_lib.py"),
+            (ROOT / "src" / "clearframe_core" / "env_paths.py", "env_paths.py"),
             (ROOT / "tools" / "export_ide_sync.py", "export_ide_sync.py"),
         ],
         "references": [

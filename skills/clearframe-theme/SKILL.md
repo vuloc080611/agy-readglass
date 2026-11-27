@@ -26,7 +26,7 @@ Create or select high-readability glass themes that stay legible for full work s
 ## Workflow
 
 1. **Clarify intent:** Identify whether the request matches one of the 6 presets or needs a new theme from a photo or mood. If unclear, ask at most 1-2 short questions (which work session, dark or light).
-2. **Existing session match:** If it maps directly to one of the 6 presets, instruct the user to select it in Antigravity's Custom Theme UI (`Alt+Shift+T`) or install a pack with [install_pack.py](./scripts/install_pack.py). Do not create redundant duplicate presets.
+2. **Existing session match:** If it maps directly to one of the 6 presets, instruct the user to select it in Antigravity's Custom Theme UI (`Alt+Shift+T`), install a pack with [install_pack.py](./scripts/install_pack.py), or rotate default preset by work shift with [shift_preset.py](./scripts/shift_preset.py). Do not create redundant duplicate presets.
 3. **New theme from photo or mood:**
    - Read [theme-schema.md](./references/theme-schema.md) and [contrast.md](./references/contrast.md).
    - Extract 2 balanced accent colors. Do not bundle copyrighted fanart, anime posters, or watermarked images; leave `wallpaper: ""` unless the user provides their own image with clear rights.
