@@ -23,43 +23,75 @@
     }
     .layout {
       display: grid;
-      grid-template-columns: 350px 1fr;
+      grid-template-columns: 370px 1fr;
       min-height: 100vh;
     }
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
+      .stage-wrap { order: -1; padding: 14px; }
+      .app-frame { min-height: 460px; }
+      .app-body { min-height: 418px; }
     }
     .controls {
       background: var(--studio-panel);
       border-right: 1px solid var(--studio-border);
-      padding: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       overflow-y: auto;
     }
-    h1 { font-size: 1.12rem; margin: 0; letter-spacing: -0.01em; }
-    .subtitle { font-size: 0.82rem; color: var(--studio-muted); margin: 2px 0 0; }
+    .top-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    h1 { font-size: 1.1rem; margin: 0; letter-spacing: -0.01em; }
+    .subtitle { font-size: 0.8rem; color: var(--studio-muted); margin: 3px 0 0; }
+    .lang-toggle {
+      display: inline-flex;
+      border: 1px solid var(--studio-border);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .lang-btn {
+      background: transparent;
+      border: 0;
+      color: var(--studio-muted);
+      padding: 4px 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: rgba(224, 164, 90, 0.22);
+      color: var(--studio-ink);
+    }
     .section {
       border: 1px solid var(--studio-border);
       border-radius: 10px;
-      padding: 12px;
+      padding: 11px;
       background: rgba(255, 255, 255, 0.02);
     }
     .section-title {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--studio-muted);
       margin: 0 0 8px;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .preset-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
     }
-    button, select, input[type="text"] {
+    button, select, input[type="text"], textarea {
       font: inherit;
       color: inherit;
     }
@@ -68,7 +100,7 @@
       border: 1px solid var(--studio-border);
       border-radius: 8px;
       padding: 7px 10px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       cursor: pointer;
       text-align: left;
       transition: background 0.15s, border-color 0.15s;
@@ -81,22 +113,18 @@
       border-color: var(--studio-accent);
       background: rgba(224, 164, 90, 0.14);
     }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .btn-sm { padding: 4px 8px; font-size: 0.74rem; border-radius: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       margin-bottom: 8px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
     .row:last-child { margin-bottom: 0; }
-    input[type="range"] { width: 145px; accent-color: var(--studio-accent); }
+    input[type="range"] { width: 140px; accent-color: var(--studio-accent); }
     .metrics-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -106,9 +134,9 @@
       border: 1px solid var(--studio-border);
       border-radius: 7px;
       padding: 6px 8px;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
     }
-    .metric .label { color: var(--studio-muted); display: block; font-size: 0.70rem; }
+    .metric .label { color: var(--studio-muted); display: block; font-size: 0.69rem; }
     .metric .val { font-weight: 700; font-variant-numeric: tabular-nums; }
     .badge-pass { color: #3ecf8e; }
     .badge-warn { color: #f5b971; }
@@ -123,6 +151,35 @@
       border-color: rgba(224, 164, 90, 0.45);
       justify-content: center;
       font-weight: 600;
+    }
+    .btn-center { justify-content: center; }
+    .zone-box {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 7px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--studio-border);
+      font-size: 0.74rem;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .rescue-area {
+      width: 100%;
+      min-height: 82px;
+      background: #0b0d11;
+      border: 1px solid var(--studio-border);
+      border-radius: 7px;
+      padding: 8px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.72rem;
+      resize: vertical;
+      margin-bottom: 7px;
+    }
+    .rescue-status {
+      font-size: 0.74rem;
+      color: var(--studio-muted);
+      margin-top: 6px;
     }
     .stage-wrap {
       padding: 20px;
@@ -181,11 +238,7 @@
       gap: 8px;
       font-size: 0.83rem;
     }
-    .sb-item {
-      padding: 7px 9px;
-      border-radius: 7px;
-      cursor: default;
-    }
+    .sb-item { padding: 7px 9px; border-radius: 7px; cursor: default; }
     .app-canvas {
       padding: 18px 22px;
       display: flex;
@@ -224,13 +277,10 @@
     }
     .diff-add { background: rgba(62, 207, 142, 0.16); padding: 1px 4px; border-radius: 3px; display: block; }
     .diff-del { background: rgba(239, 68, 68, 0.16); padding: 1px 4px; border-radius: 3px; display: block; }
+    .diff-add.cvd { background: rgba(59, 130, 246, 0.20); }
+    .diff-del.cvd { background: rgba(224, 139, 58, 0.22); }
     .pills-row { display: flex; flex-wrap: wrap; gap: 7px; }
-    .pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
+    .pill { padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     .bottom-grid {
       margin-top: auto;
       display: grid;
@@ -238,35 +288,22 @@
       gap: 12px;
       align-items: end;
     }
-    @media (max-width: 720px) {
-      .bottom-grid { grid-template-columns: 1fr; }
-    }
-    .composer, .modal-preview {
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 0.82rem;
-    }
-    .modal-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .mini-card {
-      padding: 7px 9px;
-      border-radius: 7px;
-      font-size: 0.74rem;
-      font-weight: 600;
-    }
-    .status-toast {
-      font-size: 0.76rem;
-      color: #3ecf8e;
-      min-height: 1.1em;
-    }
+    @media (max-width: 720px) { .bottom-grid { grid-template-columns: 1fr; } }
+    .composer, .modal-preview { border-radius: 10px; padding: 12px; font-size: 0.82rem; }
+    .modal-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .mini-card { padding: 7px 9px; border-radius: 7px; font-size: 0.74rem; font-weight: 600; }
+    .status-toast { font-size: 0.76rem; color: #3ecf8e; min-height: 1.1em; margin-top: 6px; }
     .sim-deutan { filter: url(#deutan-filter); }
     .sim-protan { filter: url(#protan-filter); }
     .sim-gray { filter: grayscale(100%); }
     .sim-night { filter: sepia(26%) saturate(92%) brightness(95%); }
+    select.ctrl-select {
+      background: #0b0d11;
+      border: 1px solid var(--studio-border);
+      border-radius: 6px;
+      padding: 4px 6px;
+      font-size: 0.78rem;
+    }
   </style>
 </head>
 <body>
@@ -283,44 +320,58 @@
 
   <div class="layout">
     <aside class="controls">
-      <div>
-        <h1>Clearframe Studio</h1>
-        <p class="subtitle">Test work-session presets, wallpapers, CVD &amp; live WCAG/APCA before installing.</p>
+      <div class="top-bar">
+        <div>
+          <h1>Clearframe Studio</h1>
+          <p class="subtitle" data-i18n="subtitle">Test work-session presets, wallpapers, OKLCH &amp; live WCAG/APCA before installing.</p>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language toggle">
+          <button type="button" class="lang-btn active" id="lang-en">EN</button>
+          <button type="button" class="lang-btn" id="lang-vi">VI</button>
+        </div>
       </div>
 
       <div class="section">
-        <div class="section-title">1. Work-Session Presets</div>
+        <div class="section-title"><span data-i18n="secPresets">1. Work-Session Presets</span></div>
         <div class="preset-grid" id="preset-buttons"></div>
       </div>
 
       <div class="section">
-        <div class="section-title">2. Tweak Glass &amp; Accents</div>
+        <div class="section-title">
+          <span data-i18n="secOklch">2. OKLCH Lab &amp; Glass</span>
+          <button class="btn btn-sm" id="btn-mode-toggle" type="button">Dark</button>
+        </div>
         <div class="row">
-          <span>Primary / Secondary</span>
-          <span>
+          <span data-i18n="lblAccents">Primary / Secondary</span>
+          <span style="display:flex;align-items:center;gap:6px;">
             <input type="color" id="pick-primary" />
             <input type="color" id="pick-secondary" />
+            <button class="btn btn-sm" id="btn-oklch-gen" type="button" data-i18n="btnOklch">OKLCH Tint</button>
           </span>
         </div>
         <div class="row">
-          <span>Sidebar Alpha (<span id="lbl-sb-a">0.78</span>)</span>
-          <input type="range" id="rng-sb-a" min="0.50" max="0.99" step="0.01" />
+          <span><span data-i18n="lblSbAlpha">Sidebar Alpha</span> (<span id="lbl-sb-a">0.78</span>)</span>
+          <input type="range" id="rng-sb-a" min="0.45" max="0.99" step="0.01" />
         </div>
         <div class="row">
-          <span>AI Card Alpha (<span id="lbl-ai-a">0.92</span>)</span>
-          <input type="range" id="rng-ai-a" min="0.50" max="0.99" step="0.01" />
+          <span><span data-i18n="lblAiAlpha">AI Card Alpha</span> (<span id="lbl-ai-a">0.92</span>)</span>
+          <input type="range" id="rng-ai-a" min="0.45" max="0.99" step="0.01" />
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">3. Wallpaper &amp; Vision Simulator</div>
+        <div class="section-title"><span data-i18n="secWp">3. Wallpaper Zones &amp; Vision</span></div>
         <div class="row">
-          <input type="file" id="wp-upload" accept="image/*" style="font-size:0.75rem;max-width:210px;" />
-          <button class="btn" id="wp-clear" type="button">Clear</button>
+          <input type="file" id="wp-upload" accept="image/*" style="font-size:0.74rem;max-width:215px;" />
+          <button class="btn btn-sm" id="wp-clear" type="button" data-i18n="btnClear">Clear</button>
         </div>
-        <div class="row">
-          <span>Vision / Environment</span>
-          <select id="sim-mode" style="background:#0b0d11;border:1px solid var(--studio-border);border-radius:6px;padding:4px 6px;font-size:0.8rem;">
+        <div class="zone-box" id="wp-zone-box">
+          <div id="wp-zone-text"></div>
+          <button class="btn btn-sm btn-primary btn-center" id="btn-wp-autofix" type="button" data-i18n="btnWpFix">Auto-Fix Alpha for Wallpaper</button>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <span data-i18n="lblVision">Vision / Environment</span>
+          <select id="sim-mode" class="ctrl-select">
             <option value="none">Normal Vision</option>
             <option value="sim-deutan">Deuteranopia (CVD)</option>
             <option value="sim-protan">Protanopia (CVD)</option>
@@ -331,17 +382,42 @@
       </div>
 
       <div class="section">
-        <div class="section-title">4. Live WCAG 2.1 &amp; APCA Telemetry</div>
+        <div class="section-title"><span data-i18n="secMetrics">4. Live WCAG 2.1 &amp; APCA Telemetry</span></div>
         <div class="metrics-grid" id="metrics-grid"></div>
       </div>
 
       <div class="section">
-        <div class="section-title">5. Export Ready-to-Use Configs</div>
+        <div class="section-title">
+          <span data-i18n="secRescue">5. Rescue Existing themes.json</span>
+          <button class="btn btn-sm" id="btn-rescue-sample" type="button" data-i18n="btnLoadSample">Sample</button>
+        </div>
+        <textarea class="rescue-area" id="rescue-input" placeholder='Paste themes.json, mod-v2, or pack.json here...'></textarea>
         <div class="actions">
-          <button class="btn btn-primary" id="btn-copy-pack" type="button">Copy pack.json</button>
-          <button class="btn" id="btn-dl-pack" type="button">Download .json</button>
-          <button class="btn" id="btn-copy-ide" type="button">Copy IDE Colors</button>
-          <button class="btn" id="btn-copy-prompt" type="button">Copy Skill Prompt</button>
+          <button class="btn btn-center" id="btn-rescue-load" type="button" data-i18n="btnAudit">Audit</button>
+          <button class="btn btn-primary" id="btn-rescue-fix" type="button" data-i18n="btnAutoFix">Auto-Fix to AA</button>
+        </div>
+        <div class="rescue-status" id="rescue-status"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">
+          <span data-i18n="secExport">6. Export Ready-to-Use Configs</span>
+          <label style="font-size:0.7rem;display:flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0;">
+            <input type="checkbox" id="chk-cvd-diff" /> CVD Diff
+          </label>
+        </div>
+        <div class="row">
+          <span data-i18n="lblFormat">Pack Format</span>
+          <select id="export-fmt" class="ctrl-select">
+            <option value="agy-theme">agy-theme (pack / flat)</option>
+            <option value="mod-v2">mod-v2 (defaultTheme + presets)</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-copy-pack" type="button" data-i18n="btnCopyPack">Copy JSON</button>
+          <button class="btn btn-center" id="btn-dl-pack" type="button" data-i18n="btnDlPack">Download .json</button>
+          <button class="btn btn-center" id="btn-copy-ide" type="button" data-i18n="btnCopyIde">Copy IDE Colors</button>
+          <button class="btn btn-center" id="btn-copy-prompt" type="button" data-i18n="btnCopyPrompt">Copy Skill Prompt</button>
         </div>
         <div class="status-toast" id="toast"></div>
       </div>
@@ -349,7 +425,7 @@
 
     <main class="stage-wrap">
       <div class="stage-note">
-        <span>Interactive Preview Studio (static simulation — apply real themes via <code>agy-theme build</code>)</span>
+        <span data-i18n="stageNote">Interactive Preview Studio (static simulation — apply real themes via <code>agy-theme build</code>)</span>
         <span id="concept-display"></span>
       </div>
 
@@ -370,8 +446,8 @@
             </nav>
 
             <section class="app-canvas" id="app-canvas">
-              <div class="user-bubble" id="user-bubble">
-                Kiểm tra giúp tôi khả năng đọc tiếng Việt có dấu (ệ, ợ, ẫ, ữ) và tách diff khi review PR ban đêm.
+              <div class="user-bubble" id="user-bubble" data-i18n="sampleUser">
+                Check Vietnamese diacritics (ệ, ợ, ẫ, ữ) and PR diff separation for a full coding session.
               </div>
 
               <div class="ai-card" id="ai-card">
@@ -386,12 +462,12 @@
                 </svg>
 
                 <div style="font-weight:700;" id="ai-title">AI Card • Readability Verified</div>
-                <div>
-                  Bề mặt thẻ AI sử dụng độ đục cân bằng trên <code>overlayRgb</code> giúp chữ dấu tiếng Việt sắc nét không bị quầng sáng (halation).
+                <div data-i18n="sampleAi">
+                  Balanced card opacity over <code>overlayRgb</code> keeps body copy and Vietnamese diacritics crisp without dark-mode halation.
                 </div>
                 <div class="code-box" id="code-box">
-                  <span class="diff-del">- background: rgba(18, 22, 28, 0.35); /* FAIL 2.9:1 */</span>
-                  <span class="diff-add">+ background: rgba(18, 22, 28, 0.86); /* PASS 15.2:1 */</span>
+                  <span class="diff-del" id="diff-del-line">- background: rgba(18, 22, 28, 0.35); /* FAIL 2.9:1 */</span>
+                  <span class="diff-add" id="diff-add-line">+ background: rgba(18, 22, 28, 0.86); /* PASS 15.2:1 */</span>
                 </div>
                 <div class="pills-row">
                   <span class="pill" id="pill-1">WCAG AAA Ready</span>
@@ -404,10 +480,10 @@
               <div class="bottom-grid">
                 <div class="composer" id="composer">
                   <div style="font-size:0.75rem;margin-bottom:6px;" id="comp-muted">Composer (inputCardBg)</div>
-                  <div>Ask Antigravity to switch session or scaffold from a photo...</div>
+                  <div data-i18n="sampleComposer">Ask Antigravity to switch session or scaffold from a photo...</div>
                 </div>
                 <div class="modal-preview" id="modal-preview">
-                  <div style="font-weight:700;font-size:0.78rem;" id="modal-hdr">Theme Studio Modal (AAA >= 7:1)</div>
+                  <div style="font-weight:700;font-size:0.78rem;" id="modal-hdr">Theme Studio Modal (AAA &gt;= 7:1)</div>
                   <div class="modal-cards">
                     <div class="mini-card" id="mini-card-unselected">Unselected</div>
                     <div class="mini-card" id="mini-card-selected">Selected</div>
@@ -669,21 +745,86 @@
 };
     /* CLEARFRAME_PRESETS_END */
 
+    const I18N = {
+      en: {
+        subtitle: "Test work-session presets, wallpapers, OKLCH & live WCAG/APCA before installing.",
+        secPresets: "1. Work-Session Presets",
+        secOklch: "2. OKLCH Lab & Glass",
+        lblAccents: "Primary / Secondary",
+        btnOklch: "OKLCH Tint",
+        lblSbAlpha: "Sidebar Alpha",
+        lblAiAlpha: "AI Card Alpha",
+        secWp: "3. Wallpaper Zones & Vision",
+        btnClear: "Clear",
+        btnWpFix: "Auto-Fix Alpha for Wallpaper",
+        lblVision: "Vision / Environment",
+        secMetrics: "4. Live WCAG 2.1 & APCA Telemetry",
+        secRescue: "5. Rescue Existing themes.json",
+        btnLoadSample: "Sample",
+        btnAudit: "Audit",
+        btnAutoFix: "Auto-Fix to AA",
+        secExport: "6. Export Ready-to-Use Configs",
+        lblFormat: "Pack Format",
+        btnCopyPack: "Copy JSON",
+        btnDlPack: "Download .json",
+        btnCopyIde: "Copy IDE Colors",
+        btnCopyPrompt: "Copy Skill Prompt",
+        stageNote: "Interactive Preview Studio (static simulation — apply real themes via <code>agy-theme build</code>)",
+        sampleUser: "Check Vietnamese diacritics (ệ, ợ, ẫ, ữ) and PR diff separation for a full coding session.",
+        sampleAi: "Balanced card opacity over <code>overlayRgb</code> keeps body copy and Vietnamese diacritics crisp without dark-mode halation.",
+        sampleComposer: "Ask Antigravity to switch session or scaffold from a photo..."
+      },
+      vi: {
+        subtitle: "Thử preset theo ca làm, ảnh nền, OKLCH & xem số WCAG/APCA trước khi cài đặt.",
+        secPresets: "1. Preset theo ca làm việc",
+        secOklch: "2. Phối màu OKLCH & Độ đục kính",
+        lblAccents: "Màu nhấn Chính / Phụ",
+        btnOklch: "Pha OKLCH",
+        lblSbAlpha: "Độ đục Sidebar",
+        lblAiAlpha: "Độ đục Thẻ AI",
+        secWp: "3. Ảnh nền & Giả lập Thị giác",
+        btnClear: "Xóa ảnh",
+        btnWpFix: "Tự nâng Alpha chống chói",
+        lblVision: "Thị giác / Màn hình",
+        secMetrics: "4. Số đo WCAG 2.1 & APCA trực tiếp",
+        secRescue: "5. Cứu file themes.json có sẵn",
+        btnLoadSample: "Nạp mẫu lỗi",
+        btnAudit: "Kiểm tra",
+        btnAutoFix: "Tự sửa đạt AA",
+        secExport: "6. Xuất cấu hình dùng ngay",
+        lblFormat: "Định dạng Pack",
+        btnCopyPack: "Copy JSON",
+        btnDlPack: "Tải về .json",
+        btnCopyIde: "Copy màu IDE",
+        btnCopyPrompt: "Copy lệnh Skill",
+        stageNote: "Studio xem trước (mô phỏng web tĩnh — áp dụng vào app thật bằng <code>agy-theme build</code>)",
+        sampleUser: "Kiểm tra giúp tôi độ nét chữ tiếng Việt có dấu (ệ, ợ, ẫ, ữ) và tách lớp diff khi review PR cả buổi.",
+        sampleAi: "Độ đục thẻ cân bằng trên <code>overlayRgb</code> giúp chữ tiếng Việt sắc nét và không bị quầng sáng (halation).",
+        sampleComposer: "Nhờ Antigravity đổi sang ca làm việc hoặc tạo theme mới từ ảnh..."
+      }
+    };
+
+    let currentLang = "en";
     let currentName = Object.keys(INITIAL_PRESETS)[0] || "Deep Ink";
     let state = JSON.parse(JSON.stringify(INITIAL_PRESETS[currentName] || {}));
     let wallpaperUrl = "";
+    let wpZoneReport = null;
+
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
     function parseOverlay(str) {
+      if (Array.isArray(str) && str.length === 3) return str.map(Number);
       const p = String(str).split(",").map(v => parseFloat(v.trim()));
-      return p.length === 3 ? p : [10, 12, 16];
+      return p.length === 3 && p.every(n => !Number.isNaN(n)) ? p : [10, 12, 16];
     }
 
     function parseRgba(str, fallback = [16, 18, 22, 0.92]) {
       if (!str) return fallback;
-      const s = str.trim();
+      const s = String(str).trim();
       if (s.startsWith("#")) {
         const h = s.slice(1);
-        return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16), 1];
+        if (h.length === 3) return [parseInt(h[0]+h[0],16), parseInt(h[1]+h[1],16), parseInt(h[2]+h[2],16), 1];
+        return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16), h.length >= 8 ? parseInt(h.slice(6,8),16)/255 : 1];
       }
       const m = s.match(/rgba?\(([^)]+)\)/i);
       if (!m) return fallback;
@@ -691,9 +832,14 @@
       return [parts[0]||0, parts[1]||0, parts[2]||0, parts.length > 3 ? parts[3] : 1];
     }
 
+    function extractAllStops(str) {
+      const m = String(str || "").match(/rgba?\([^)]+\)|#[0-9a-fA-F]{3,8}\b/gi);
+      return m && m.length ? m.map(tok => parseRgba(tok)) : [parseRgba(str)];
+    }
+
     function setAlpha(str, a) {
       const [r, g, b] = parseRgba(str);
-      return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a.toFixed(2)})`;
+      return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${clamp(a, 0, 1).toFixed(2)})`;
     }
 
     function blendOver(rgba, ov) {
@@ -701,9 +847,13 @@
       return [a*rgba[0]+(1-a)*ov[0], a*rgba[1]+(1-a)*ov[1], a*rgba[2]+(1-a)*ov[2]];
     }
 
+    function rgbToHex(rgb) {
+      return "#" + rgb.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join("");
+    }
+
     function relLum(rgb) {
       const f = c => {
-        const s = Math.max(0, Math.min(255, c)) / 255;
+        const s = clamp(c, 0, 255) / 255;
         return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
       };
       return 0.2126*f(rgb[0]) + 0.7152*f(rgb[1]) + 0.0722*f(rgb[2]);
@@ -714,9 +864,24 @@
       return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
     }
 
+    function worstStopMetrics(fgRgb, cssSurface, ov) {
+      const stops = extractAllStops(cssSurface);
+      let minR = 999, worstLc = 0, worstBlend = ov;
+      for (const st of stops) {
+        const bl = blendOver(st, ov);
+        const r = ratio(fgRgb, bl);
+        if (r < minR) {
+          minR = r;
+          worstLc = apcaLc(fgRgb, bl);
+          worstBlend = bl;
+        }
+      }
+      return { ratio: minR, lc: worstLc, blended: worstBlend };
+    }
+
     function apcaLc(txt, bg) {
       const sy = rgb => {
-        const y = 0.2126729*Math.pow(rgb[0]/255,2.4) + 0.7151522*Math.pow(rgb[1]/255,2.4) + 0.0721750*Math.pow(rgb[2]/255,2.4);
+        const y = 0.2126729*Math.pow(clamp(rgb[0],0,255)/255,2.4) + 0.7151522*Math.pow(clamp(rgb[1],0,255)/255,2.4) + 0.0721750*Math.pow(clamp(rgb[2],0,255)/255,2.4);
         return y < 0.022 ? y + Math.pow(0.022 - y, 1.414) : y;
       };
       const yt = sy(txt), yb = sy(bg);
@@ -726,16 +891,213 @@
       return (sapc > 0 ? sapc - 0.027 : sapc + 0.027) * 100;
     }
 
+    // Pure-JS OKLCH math matching clearframe_core/contrast_lib.py
+    function srgbToOklch(rgb) {
+      const toLin = c => { const s = clamp(c,0,255)/255; return s <= 0.04045 ? s/12.92 : Math.pow((s+0.055)/1.055, 2.4); };
+      const r = toLin(rgb[0]), g = toLin(rgb[1]), b = toLin(rgb[2]);
+      const l = Math.cbrt(0.4121656120*r + 0.5362752080*g + 0.0514575653*b);
+      const m = Math.cbrt(0.2118591070*r + 0.6807189584*g + 0.1074065790*b);
+      const s = Math.cbrt(0.0883097947*r + 0.2818474174*g + 0.6302613616*b);
+      const L = 0.2104542553*l + 0.7936177850*m - 0.0040720468*s;
+      const a = 1.9779984951*l - 2.4285922050*m + 0.4505937099*s;
+      const bk = 0.0259040371*l + 0.7827717662*m - 0.8086757660*s;
+      const C = Math.hypot(a, bk);
+      const h = C > 1e-7 ? ((Math.atan2(bk, a) * 180 / Math.PI) + 360) % 360 : 0;
+      return [L, C, h];
+    }
+
+    function oklchToSrgb(L, C, hDeg) {
+      L = clamp(L, 0, 1); C = Math.max(0, C);
+      const rad = hDeg * Math.PI / 180, cosH = Math.cos(rad), sinH = Math.sin(rad);
+      const oklabToLin = (lIn, cIn) => {
+        const a = cIn * cosH, bk = cIn * sinH;
+        const l_ = lIn + 0.3963377774*a + 0.2158037573*bk;
+        const m_ = lIn - 0.1055613458*a - 0.0638541728*bk;
+        const s_ = lIn - 0.0894841775*a - 1.2914855480*bk;
+        const lc = l_*l_*l_, mc = m_*m_*m_, sc = s_*s_*s_;
+        return [
+          +4.0767416621*lc - 3.3077115913*mc + 0.2309699292*sc,
+          -1.2684380046*lc + 2.6097574011*mc - 0.3413193965*sc,
+          -0.0041960863*lc - 0.7034186147*mc + 1.7076147010*sc,
+        ];
+      };
+      let lin = oklabToLin(L, C);
+      if (Math.min(...lin) < -1e-5 || Math.max(...lin) > 1.00001) {
+        let lo = 0, hi = C;
+        for (let i = 0; i < 16; i++) {
+          const mid = 0.5 * (lo + hi);
+          const cand = oklabToLin(L, mid);
+          if (Math.min(...cand) >= 0 && Math.max(...cand) <= 1) lo = mid; else hi = mid;
+        }
+        lin = oklabToLin(L, lo);
+      }
+      const toSrgb = v => { v = clamp(v,0,1); return (v <= 0.0031308 ? 12.92*v : 1.055*Math.pow(v, 1/2.4)-0.055)*255; };
+      return lin.map(toSrgb);
+    }
+
+    function applyOklchHarmony(priHex, secHex, isLight) {
+      const [pL, pC, pH] = srgbToOklch(parseRgba(priHex));
+      const [sL, sC, sH] = srgbToOklch(parseRgba(secHex));
+      const safeP = oklchToSrgb(isLight ? clamp(pL, 0.42, 0.56) : clamp(pL, 0.64, 0.78), Math.min(pC, 0.145), pH);
+      const safeS = oklchToSrgb(isLight ? clamp(sL, 0.42, 0.56) : clamp(sL, 0.64, 0.78), Math.min(sC, 0.145), sH);
+      const rgbaStr = (rgb, a) => `rgba(${Math.round(rgb[0])}, ${Math.round(rgb[1])}, ${Math.round(rgb[2])}, ${a.toFixed(2)})`;
+
+      if (isLight) {
+        const ink = rgbToHex(oklchToSrgb(0.21, 0.014, pH));
+        const muted = rgbToHex(oklchToSrgb(0.45, 0.018, pH));
+        const ov = oklchToSrgb(0.955, 0.012, pH);
+        const bg1 = oklchToSrgb(0.990, 0.008, pH);
+        const bg2 = oklchToSrgb(0.952, 0.014, sH);
+        const ai = oklchToSrgb(0.988, 0.008, sH);
+        const sel = oklchToSrgb(0.925, 0.025, pH);
+        Object.assign(state, {
+          isLight: true,
+          primary: rgbToHex(safeP), secondary: rgbToHex(safeS),
+          glow: rgbaStr(safeP, 0.12), secondaryGlow: rgbaStr(safeS, 0.10),
+          overlayRgb: state.wallpaper ? state.overlayRgb : `${Math.round(ov[0])}, ${Math.round(ov[1])}, ${Math.round(ov[2])}`,
+          textColor: ink, uiTextColor: ink, uiMutedColor: muted, pillTextColor: ink,
+          bg: `linear-gradient(145deg, ${rgbaStr(bg1, 0.94)} 0%, ${rgbaStr(bg2, 0.94)} 100%)`,
+          inputCardBg: `linear-gradient(145deg, ${rgbaStr(bg1, 0.94)} 0%, ${rgbaStr(bg2, 0.94)} 100%)`,
+          sidebarBg: rgbaStr(ov, state.wallpaper ? 0.90 : 0.88),
+          aiCardBg: rgbaStr(ai, 0.94),
+          headerBg: rgbaStr(ov, 0.90),
+          btnBg: rgbaStr(bg1, 0.92),
+          inputGlassBg: rgbaStr(ai, 0.92),
+          modalBg: rgbaStr(bg1, 0.98),
+          modalHeaderBg: rgbaStr(ov, 0.98),
+          cardBg: rgbaStr(ai, 0.94),
+          cardSelectedBg: rgbaStr(sel, 0.96),
+          pillBg: rgbaStr(bg1, 0.94),
+          borderColor: rgbaStr(safeP, 0.30),
+          aiCardBorder: rgbaStr(parseRgba(ink), 0.10),
+          pillBorder: rgbaStr(parseRgba(ink), 0.14),
+          pureBg: `linear-gradient(180deg, ${rgbToHex(bg1)} 0%, ${rgbToHex(bg2)} 100%)`,
+          concept: `OKLCH Light • ${rgbToHex(safeP)} & ${rgbToHex(safeS)} • AA`
+        });
+      } else {
+        const ink = rgbToHex(oklchToSrgb(0.92, 0.012, pH));
+        const muted = rgbToHex(oklchToSrgb(0.79, 0.016, sH));
+        const ov = oklchToSrgb(0.165, 0.012, pH);
+        const bg1 = oklchToSrgb(0.225, 0.018, pH);
+        const bg2 = oklchToSrgb(0.185, 0.014, sH);
+        const sb = oklchToSrgb(0.175, 0.012, pH);
+        const ai = oklchToSrgb(0.188, 0.014, sH);
+        const md = oklchToSrgb(0.185, 0.010, pH);
+        const sel = oklchToSrgb(0.295, 0.035, pH);
+        Object.assign(state, {
+          isLight: false,
+          primary: rgbToHex(safeP), secondary: rgbToHex(safeS),
+          glow: rgbaStr(safeP, 0.12), secondaryGlow: rgbaStr(safeS, 0.09),
+          overlayRgb: state.wallpaper ? state.overlayRgb : `${Math.round(ov[0])}, ${Math.round(ov[1])}, ${Math.round(ov[2])}`,
+          textColor: ink, uiTextColor: ink, uiMutedColor: muted, pillTextColor: ink,
+          bg: `linear-gradient(145deg, ${rgbaStr(bg1, 0.94)} 0%, ${rgbaStr(bg2, 0.94)} 100%)`,
+          inputCardBg: `linear-gradient(145deg, ${rgbaStr(bg1, 0.94)} 0%, ${rgbaStr(bg2, 0.94)} 100%)`,
+          sidebarBg: rgbaStr(sb, state.wallpaper ? 0.88 : 0.84),
+          aiCardBg: rgbaStr(ai, 0.94),
+          headerBg: rgbaStr(sb, 0.88),
+          btnBg: rgbaStr(bg1, 0.92),
+          inputGlassBg: rgbaStr(ai, 0.92),
+          modalBg: rgbaStr(md, 0.98),
+          modalHeaderBg: rgbaStr(bg2, 0.98),
+          cardBg: rgbaStr(ai, 0.94),
+          cardSelectedBg: rgbaStr(sel, 0.96),
+          pillBg: rgbaStr(bg1, 0.92),
+          borderColor: rgbaStr(safeP, 0.30),
+          aiCardBorder: rgbaStr(safeS, 0.18),
+          pillBorder: rgbaStr(parseRgba(ink), 0.12),
+          pureBg: `radial-gradient(1100px 560px at 50% 100%, ${rgbaStr(safeP, 0.08)}, transparent 55%), ${rgbToHex(ov)}`,
+          concept: `OKLCH Dark • ${rgbToHex(safeP)} & ${rgbToHex(safeS)} • AA`
+        });
+      }
+      syncControlInputs();
+      render();
+    }
+
+    function repairThemeObject(rawPreset) {
+      const p = JSON.parse(JSON.stringify(rawPreset));
+      const fixes = [];
+      const isLight = Boolean(p.isLight);
+      if (!p.overlayRgb) { p.overlayRgb = isLight ? "244, 241, 234" : "12, 14, 18"; fixes.push("overlayRgb"); }
+      const ov = parseOverlay(p.overlayRgb);
+      const fallbackInk = isLight ? "#1c1915" : "#ebe7df";
+
+      if (!p.textColor || (!isLight && relLum(parseRgba(p.textColor)) < 0.70) || (isLight && relLum(parseRgba(p.textColor)) > 0.18)) {
+        p.textColor = fallbackInk; fixes.push("textColor");
+      }
+      if (!p.uiTextColor || (!isLight && relLum(parseRgba(p.uiTextColor)) < 0.70) || (isLight && relLum(parseRgba(p.uiTextColor)) > 0.18)) {
+        p.uiTextColor = fallbackInk; fixes.push("uiTextColor");
+      }
+      if (!p.pillTextColor) p.pillTextColor = p.uiTextColor;
+      if (!p.uiMutedColor) p.uiMutedColor = isLight ? "#5c564c" : "#b7c0cc";
+
+      ["glow", "secondaryGlow"].forEach(k => {
+        if (p[k] && parseRgba(p[k])[3] > 0.18) {
+          p[k] = setAlpha(p[k], 0.16);
+          fixes.push(k);
+        }
+      });
+
+      if (p.wallpaper && String(p.wallpaper).trim()) {
+        if (p.sidebarEnhanceText !== true) { p.sidebarEnhanceText = true; fixes.push("sidebarEnhanceText"); }
+        if (p.sidebarBg && parseRgba(p.sidebarBg)[3] < 0.82) { p.sidebarBg = setAlpha(p.sidebarBg, 0.86); fixes.push("sidebarBg alpha"); }
+        if (p.aiCardBg && parseRgba(p.aiCardBg)[3] < 0.84) { p.aiCardBg = setAlpha(p.aiCardBg, 0.88); fixes.push("aiCardBg alpha"); }
+      }
+
+      const uiInk = parseRgba(p.uiTextColor);
+      const txtInk = parseRgba(p.textColor);
+      const fixSurface = (field, fg, target) => {
+        if (!p[field]) return;
+        let m = worstStopMetrics(fg, p[field], ov);
+        if (m.ratio >= target) return;
+        let [r, g, b, a] = parseRgba(p[field]);
+        while (a < 0.98) {
+          a = Math.min(0.98, a + 0.04);
+          const cand = `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a.toFixed(2)})`;
+          if (ratio(fg, blendOver([r,g,b,a], ov)) >= target) { p[field] = cand; fixes.push(field); return; }
+        }
+        p[field] = isLight ? "rgba(255, 252, 246, 0.96)" : "rgba(16, 18, 22, 0.96)";
+        fixes.push(field);
+      };
+
+      ["sidebarBg", "aiCardBg", "headerBg", "btnBg", "inputGlassBg", "cardBg", "cardSelectedBg", "pillBg"].forEach(f => fixSurface(f, uiInk, 4.5));
+      ["modalBg", "modalHeaderBg"].forEach(f => fixSurface(f, uiInk, 7.0));
+      ["bg", "inputCardBg"].forEach(f => fixSurface(f, txtInk, 4.5));
+
+      const aiBlend = blendOver(parseRgba(p.aiCardBg || "rgba(16,18,22,0.92)"), ov);
+      if (ratio(parseRgba(p.uiMutedColor), aiBlend) < 4.5) {
+        p.uiMutedColor = isLight ? "#4d473e" : "#bac3ce";
+        fixes.push("uiMutedColor");
+      }
+      return { fixed: p, fixes };
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.getElementById("lang-en").classList.toggle("active", lang === "en");
+      document.getElementById("lang-vi").classList.toggle("active", lang === "vi");
+      const dict = I18N[lang];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) {
+          if (dict[key].includes("<code>")) el.innerHTML = dict[key];
+          else el.textContent = dict[key];
+        }
+      });
+    }
+
+    function syncControlInputs() {
+      document.getElementById("pick-primary").value = state.primary || "#e0a45a";
+      document.getElementById("pick-secondary").value = state.secondary || "#93a0b0";
+      document.getElementById("rng-sb-a").value = parseRgba(state.sidebarBg)[3];
+      document.getElementById("rng-ai-a").value = parseRgba(state.aiCardBg)[3];
+      document.getElementById("btn-mode-toggle").textContent = state.isLight ? "Light" : "Dark";
+    }
+
     function selectPreset(name) {
       currentName = name;
       state = JSON.parse(JSON.stringify(INITIAL_PRESETS[name]));
-      document.querySelectorAll("#preset-buttons .btn").forEach(b => {
-        b.classList.toggle("active", b.dataset.name === name);
-      });
-      document.getElementById("pick-primary").value = state.primary;
-      document.getElementById("pick-secondary").value = state.secondary;
-      document.getElementById("rng-sb-a").value = parseRgba(state.sidebarBg)[3];
-      document.getElementById("rng-ai-a").value = parseRgba(state.aiCardBg)[3];
+      document.querySelectorAll("#preset-buttons .btn").forEach(b => b.classList.toggle("active", b.dataset.name === name));
+      syncControlInputs();
       render();
     }
 
@@ -745,7 +1107,8 @@
       const aiA = parseRgba(state.aiCardBg)[3];
       document.getElementById("lbl-sb-a").textContent = sbA.toFixed(2);
       document.getElementById("lbl-ai-a").textContent = aiA.toFixed(2);
-      document.getElementById("concept-display").textContent = state.concept;
+      document.getElementById("concept-display").textContent = state.concept || "";
+      document.getElementById("btn-mode-toggle").textContent = state.isLight ? "Light" : "Dark";
 
       const frame = document.getElementById("app-frame");
       frame.style.background = wallpaperUrl
@@ -755,7 +1118,7 @@
       const hdr = document.getElementById("app-header");
       hdr.style.background = state.headerBg;
       hdr.style.color = state.uiTextColor;
-      hdr.style.borderBottom = `1px solid ${state.headerBorder}`;
+      hdr.style.borderBottom = `1px solid ${state.headerBorder || state.aiCardBorder}`;
       document.getElementById("header-meta").style.color = state.uiMutedColor;
 
       const sb = document.getElementById("app-sidebar");
@@ -779,17 +1142,21 @@
 
       const codeBox = document.getElementById("code-box");
       codeBox.style.background = `rgba(${state.overlayRgb}, 0.85)`;
-      codeBox.style.border = state.innerBorder;
+      codeBox.style.border = state.innerBorder || `1px solid ${state.aiCardBorder}`;
 
-      [1,2,3].forEach(i => {
+      const cvdDiff = document.getElementById("chk-cvd-diff").checked;
+      document.getElementById("diff-del-line").className = "diff-del" + (cvdDiff ? " cvd" : "");
+      document.getElementById("diff-add-line").className = "diff-add" + (cvdDiff ? " cvd" : "");
+
+      [1, 2, 3].forEach(i => {
         const el = document.getElementById(`pill-${i}`);
         el.style.background = state.pillBg;
-        el.style.color = state.pillTextColor;
+        el.style.color = state.pillTextColor || state.uiTextColor;
         el.style.border = `1px solid ${state.pillBorder}`;
       });
 
       const comp = document.getElementById("composer");
-      comp.style.background = state.inputCardBg;
+      comp.style.background = state.inputCardBg || state.bg;
       comp.style.color = state.textColor;
       comp.style.border = `1px solid ${state.borderColor}`;
       document.getElementById("comp-muted").style.color = state.uiMutedColor;
@@ -803,32 +1170,114 @@
       sel.style.background = state.cardSelectedBg;
       sel.style.border = `1px solid ${state.primary}`;
 
-      // Live WCAG & APCA Metrics
       const uiInk = parseRgba(state.uiTextColor);
       const txtInk = parseRgba(state.textColor);
-      const mutedInk = parseRgba(state.uiMutedColor);
-      const sbBlend = blendOver(parseRgba(state.sidebarBg), ov);
-      const aiBlend = blendOver(parseRgba(state.aiCardBg), ov);
-      const mdBlend = blendOver(parseRgba(state.modalBg), ov);
-      const bgBlend = blendOver(parseRgba(state.bg), ov);
+      const mutedInk = parseRgba(state.uiMutedColor || state.uiTextColor);
+      const sbM = worstStopMetrics(uiInk, state.sidebarBg, ov);
+      const aiM = worstStopMetrics(uiInk, state.aiCardBg, ov);
+      const mdM = worstStopMetrics(uiInk, state.modalBg, ov);
+      const bgM = worstStopMetrics(txtInk, state.bg, ov);
+      const muR = ratio(mutedInk, aiM.blended);
+      const muLc = apcaLc(mutedInk, aiM.blended);
+      const glowA = parseRgba(state.glow)[3];
 
       const items = [
-        ["Sidebar (>=4.5)", ratio(uiInk, sbBlend), apcaLc(uiInk, sbBlend), 4.5],
-        ["AI Card (>=4.5)", ratio(uiInk, aiBlend), apcaLc(uiInk, aiBlend), 4.5],
-        ["Modal (>=7.0)", ratio(uiInk, mdBlend), apcaLc(uiInk, mdBlend), 7.0],
-        ["User Bubble", ratio(txtInk, bgBlend), apcaLc(txtInk, bgBlend), 4.5],
-        ["Muted AI (>=4.5)", ratio(mutedInk, aiBlend), apcaLc(mutedInk, aiBlend), 4.5],
-        ["Glow Alpha <=0.18", parseRgba(state.glow)[3], null, 0.18, true],
+        ["Sidebar (>=4.5)", sbM.ratio, sbM.lc, 4.5, false],
+        ["AI Card (>=4.5)", aiM.ratio, aiM.lc, 4.5, false],
+        ["Modal (>=7.0)", mdM.ratio, mdM.lc, 7.0, false],
+        ["User Bubble", bgM.ratio, bgM.lc, 4.5, false],
+        ["Muted AI (>=4.5)", muR, muLc, 4.5, false],
+        ["Glow Alpha <=0.18", glowA, null, 0.18, true],
       ];
 
-      const grid = document.getElementById("metrics-grid");
-      grid.innerHTML = items.map(([lbl, val, lc, limit, isMax]) => {
+      document.getElementById("metrics-grid").innerHTML = items.map(([lbl, val, lc, limit, isMax]) => {
         const ok = isMax ? val <= limit : val >= limit;
         const cls = ok ? "badge-pass" : "badge-fail";
-        const formatted = isMax ? `${val.toFixed(2)}` : `${val.toFixed(2)}:1`;
+        const formatted = isMax ? val.toFixed(2) : `${val.toFixed(2)}:1`;
         const apcaStr = lc !== null ? ` • Lc ${lc > 0 ? "+" : ""}${lc.toFixed(0)}` : "";
         return `<div class="metric"><span class="label">${lbl}</span><span class="val ${cls}">${formatted}${apcaStr}</span></div>`;
       }).join("");
+    }
+
+    function buildFullIdeConfig() {
+      const ov = parseOverlay(state.overlayRgb);
+      const isLight = Boolean(state.isLight);
+      const solidHex = cssVal => rgbToHex(blendOver(extractAllStops(cssVal)[0], ov));
+      const editorBg = solidHex(state.aiCardBg);
+      const sidebarBg = solidHex(state.sidebarBg);
+      const headerBg = solidHex(state.headerBg);
+      const modalBg = solidHex(state.modalBg);
+      const tabActive = solidHex(state.btnBg);
+      const selBg = solidHex(state.cardSelectedBg);
+      const fg = rgbToHex(parseRgba(state.uiTextColor));
+      const muted = rgbToHex(parseRgba(state.uiMutedColor || fg));
+      const pri = rgbToHex(parseRgba(state.primary));
+      const [lBg, cBg, hBg] = srgbToOklch(parseRgba(editorBg));
+      const borderHex = rgbToHex(oklchToSrgb(isLight ? lBg - 0.14 : lBg + 0.14, Math.min(cBg, 0.025), hBg));
+      const cvd = document.getElementById("chk-cvd-diff").checked;
+
+      let sbAlpha = 0.42;
+      for (const a of [0.34, 0.42, 0.50, 0.58]) {
+        if (ratio(blendOver([...parseRgba(fg).slice(0,3), a], parseRgba(editorBg)), parseRgba(editorBg)) >= 3.0) {
+          sbAlpha = a; break;
+        }
+      }
+      const toHexA = a => Math.round(clamp(a, 0, 1) * 255).toString(16).padStart(2, "0");
+
+      return {
+        "workbench.colorCustomizations": {
+          "focusBorder": pri,
+          "contrastBorder": borderHex,
+          "editor.background": editorBg,
+          "editor.foreground": fg,
+          "editor.lineHighlightBackground": isLight ? selBg : modalBg,
+          "editor.selectionBackground": pri + "38",
+          "editorCursor.foreground": pri,
+          "sideBar.background": sidebarBg,
+          "sideBar.foreground": fg,
+          "sideBarTitle.foreground": fg,
+          "sideBar.border": borderHex,
+          "activityBar.background": headerBg,
+          "activityBar.foreground": fg,
+          "activityBar.inactiveForeground": muted,
+          "editorGroupHeader.tabsBackground": headerBg,
+          "tab.activeBackground": tabActive,
+          "tab.activeForeground": fg,
+          "tab.activeBorderTop": pri,
+          "tab.inactiveBackground": headerBg,
+          "tab.inactiveForeground": muted,
+          "tab.border": borderHex,
+          "statusBar.background": headerBg,
+          "statusBar.foreground": fg,
+          "statusBar.border": borderHex,
+          "panel.background": sidebarBg,
+          "panel.border": borderHex,
+          "terminal.background": editorBg,
+          "terminal.foreground": fg,
+          "scrollbarSlider.background": fg + toHexA(sbAlpha),
+          "scrollbarSlider.hoverBackground": fg + toHexA(Math.min(0.85, sbAlpha + 0.18)),
+          "scrollbarSlider.activeBackground": fg + toHexA(Math.min(0.95, sbAlpha + 0.30)),
+          "diffEditor.insertedTextBackground": cvd ? "#3b82f62e" : (isLight ? "#1f6b4524" : "#3ecf8e26"),
+          "diffEditor.removedTextBackground": cvd ? "#e08b3a30" : (isLight ? "#b83b3b24" : "#d96b6b28"),
+          "diffEditor.border": borderHex
+        },
+        "editor.lineHeight": 1.6
+      };
+    }
+
+    function exportPayload() {
+      const fmt = document.getElementById("export-fmt").value;
+      if (fmt === "mod-v2") {
+        const body = { ...state }; delete body.name;
+        return { defaultTheme: currentName, presets: { [currentName]: body } };
+      }
+      return { name: currentName, ...state };
+    }
+
+    function notify(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      setTimeout(() => { if (t.textContent === msg) t.textContent = ""; }, 2800);
     }
 
     // Build preset buttons
@@ -843,10 +1292,20 @@
       btnWrap.appendChild(btn);
     });
 
+    document.getElementById("lang-en").onclick = () => setLanguage("en");
+    document.getElementById("lang-vi").onclick = () => setLanguage("vi");
+
+    document.getElementById("btn-mode-toggle").onclick = () => {
+      applyOklchHarmony(document.getElementById("pick-primary").value, document.getElementById("pick-secondary").value, !state.isLight);
+    };
+    document.getElementById("btn-oklch-gen").onclick = () => {
+      applyOklchHarmony(document.getElementById("pick-primary").value, document.getElementById("pick-secondary").value, Boolean(state.isLight));
+    };
     document.getElementById("pick-primary").oninput = e => { state.primary = e.target.value; render(); };
     document.getElementById("pick-secondary").oninput = e => { state.secondary = e.target.value; render(); };
     document.getElementById("rng-sb-a").oninput = e => { state.sidebarBg = setAlpha(state.sidebarBg, parseFloat(e.target.value)); render(); };
     document.getElementById("rng-ai-a").oninput = e => { state.aiCardBg = setAlpha(state.aiCardBg, parseFloat(e.target.value)); render(); };
+    document.getElementById("chk-cvd-diff").onchange = () => render();
 
     document.getElementById("sim-mode").onchange = e => {
       const frame = document.getElementById("app-frame");
@@ -862,66 +1321,164 @@
       state.sidebarEnhanceText = true;
       const img = new Image();
       img.onload = () => {
+        const w = 100, h = 60, splitX = 22;
         const c = document.createElement("canvas");
-        c.width = 40; c.height = 24;
+        c.width = w; c.height = h;
         const ctx = c.getContext("2d");
-        ctx.drawImage(img, 0, 0, 40, 24);
-        const data = ctx.getImageData(0, 0, 40, 24).data;
-        let r=0, g=0, b=0, n=data.length/4;
-        for (let i=0; i<data.length; i+=4) { r+=data[i]; g+=data[i+1]; b+=data[i+2]; }
-        state.overlayRgb = `${Math.round(r/n)}, ${Math.round(g/n)}, ${Math.round(b/n)}`;
+        ctx.drawImage(img, 0, 0, w, h);
+        const data = ctx.getImageData(0, 0, w, h).data;
+        const sbPx = [], chPx = [], allPx = [];
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const px = [data[idx], data[idx+1], data[idx+2]];
+            allPx.push(px);
+            if (x < splitX) sbPx.push([relLum(px), px]); else chPx.push([relLum(px), px]);
+          }
+        }
+        sbPx.sort((a,b) => a[0] - b[0]);
+        chPx.sort((a,b) => a[0] - b[0]);
+        const pickIdx = (arr, q) => arr[Math.max(0, Math.min(arr.length-1, Math.floor(q*(arr.length-1))))][1];
+        const sbHot = state.isLight ? pickIdx(sbPx, 0.10) : pickIdx(sbPx, 0.90);
+        const chHot = state.isLight ? pickIdx(chPx, 0.10) : pickIdx(chPx, 0.90);
+        const rAvg = allPx.reduce((s,p)=>s+p[0],0)/allPx.length;
+        const gAvg = allPx.reduce((s,p)=>s+p[1],0)/allPx.length;
+        const bAvg = allPx.reduce((s,p)=>s+p[2],0)/allPx.length;
+        state.overlayRgb = `${Math.round(rAvg)}, ${Math.round(gAvg)}, ${Math.round(bAvg)}`;
+
+        const ink = parseRgba(state.uiTextColor);
+        const sbSurf = parseRgba(state.sidebarBg), chSurf = parseRgba(state.aiCardBg);
+        const minAlpha = (surf, hot, floor) => {
+          for (let a = floor; a <= 0.99; a += 0.02) {
+            if (ratio(ink, blendOver([surf[0],surf[1],surf[2],a], hot)) >= 4.5) return Number(a.toFixed(2));
+          }
+          return 0.98;
+        };
+        wpZoneReport = {
+          sbMin: minAlpha(sbSurf, sbHot, 0.82),
+          chMin: minAlpha(chSurf, chHot, 0.84),
+          sbHot, chHot
+        };
+        const box = document.getElementById("wp-zone-box");
+        box.style.display = "flex";
+        document.getElementById("wp-zone-text").textContent =
+          `Sidebar P90 rgb(${sbHot.join(",")}) -> min alpha ${wpZoneReport.sbMin.toFixed(2)} | Chat P90 rgb(${chHot.join(",")}) -> min alpha ${wpZoneReport.chMin.toFixed(2)}`;
         render();
       };
       img.src = wallpaperUrl;
     };
 
+    document.getElementById("btn-wp-autofix").onclick = () => {
+      if (!wpZoneReport) return;
+      state.sidebarBg = setAlpha(state.sidebarBg, Math.max(parseRgba(state.sidebarBg)[3], wpZoneReport.sbMin));
+      state.aiCardBg = setAlpha(state.aiCardBg, Math.max(parseRgba(state.aiCardBg)[3], wpZoneReport.chMin));
+      state.sidebarEnhanceText = true;
+      syncControlInputs();
+      render();
+      notify("Applied P90 wallpaper alpha floor!");
+    };
+
     document.getElementById("wp-clear").onclick = () => {
       if (wallpaperUrl) URL.revokeObjectURL(wallpaperUrl);
-      wallpaperUrl = "";
+      wallpaperUrl = ""; wpZoneReport = null;
       state.wallpaper = "";
       state.overlayRgb = INITIAL_PRESETS[currentName].overlayRgb;
       state.sidebarEnhanceText = INITIAL_PRESETS[currentName].sidebarEnhanceText;
       document.getElementById("wp-upload").value = "";
+      document.getElementById("wp-zone-box").style.display = "none";
       render();
     };
 
-    function notify(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      setTimeout(() => { if (t.textContent === msg) t.textContent = ""; }, 2600);
+    function parseImportedJson() {
+      const txt = document.getElementById("rescue-input").value.trim();
+      if (!txt) throw new Error("Empty JSON");
+      const raw = JSON.parse(txt);
+      if (raw.name && raw.bg) return { name: raw.name, body: raw };
+      if (raw.presets && typeof raw.presets === "object") {
+        const key = raw.defaultTheme && raw.presets[raw.defaultTheme] ? raw.defaultTheme : Object.keys(raw.presets)[0];
+        return { name: key, body: raw.presets[key] };
+      }
+      const firstKey = Object.keys(raw)[0];
+      return { name: firstKey, body: raw[firstKey] };
     }
 
+    document.getElementById("btn-rescue-sample").onclick = () => {
+      document.getElementById("rescue-input").value = JSON.stringify({
+        "name": "Washed Out Anime Glass",
+        "primary": "#00f0ff",
+        "secondary": "#ff2bd6",
+        "glow": "rgba(0, 240, 255, 0.52)",
+        "overlayRgb": "195, 200, 215",
+        "textColor": "#8b909e",
+        "uiTextColor": "#9499a8",
+        "uiMutedColor": "#5c6070",
+        "bg": "rgba(20, 24, 30, 0.42)",
+        "sidebarBg": "rgba(18, 22, 28, 0.35)",
+        "sidebarEnhanceText": false,
+        "aiCardBg": "rgba(20, 22, 26, 0.40)",
+        "headerBg": "rgba(20, 22, 26, 0.45)",
+        "btnBg": "rgba(24, 28, 34, 0.45)",
+        "inputGlassBg": "rgba(24, 28, 34, 0.45)",
+        "inputCardBg": "rgba(20, 24, 30, 0.42)",
+        "modalBg": "rgba(22, 24, 28, 0.50)",
+        "modalHeaderBg": "rgba(24, 26, 30, 0.50)",
+        "cardBg": "rgba(22, 24, 28, 0.45)",
+        "cardSelectedBg": "rgba(35, 45, 55, 0.55)",
+        "pillBg": "rgba(22, 24, 28, 0.45)",
+        "pillTextColor": "#9499a8",
+        "borderColor": "rgba(0, 240, 255, 0.30)",
+        "aiCardBorder": "rgba(255, 255, 255, 0.10)",
+        "pillBorder": "rgba(255, 255, 255, 0.14)",
+        "wallpaper": "my-wallpaper.jpg"
+      }, null, 2);
+      document.getElementById("rescue-status").textContent = "Loaded sample broken theme. Click Audit or Auto-Fix to AA.";
+    };
+
+    document.getElementById("btn-rescue-load").onclick = () => {
+      try {
+        const { name, body } = parseImportedJson();
+        currentName = name;
+        state = { ...INITIAL_PRESETS[Object.keys(INITIAL_PRESETS)[0]], ...body };
+        syncControlInputs(); render();
+        document.getElementById("rescue-status").textContent = `Audited '${name}'. Check red metrics in Section 4.`;
+      } catch (err) {
+        document.getElementById("rescue-status").textContent = `Invalid JSON: ${err.message}`;
+      }
+    };
+
+    document.getElementById("btn-rescue-fix").onclick = () => {
+      try {
+        const { name, body } = parseImportedJson();
+        const { fixed, fixes } = repairThemeObject({ ...INITIAL_PRESETS[Object.keys(INITIAL_PRESETS)[0]], ...body });
+        currentName = name;
+        state = fixed;
+        document.getElementById("rescue-input").value = JSON.stringify({ name, ...fixed }, null, 2);
+        syncControlInputs(); render();
+        document.getElementById("rescue-status").textContent = fixes.length
+          ? `Repaired ${fixes.length} tokens (${fixes.join(", ")}). Ready to export!`
+          : "Theme already passed WCAG AA/AAA!";
+      } catch (err) {
+        document.getElementById("rescue-status").textContent = `Invalid JSON: ${err.message}`;
+      }
+    };
+
     document.getElementById("btn-copy-pack").onclick = async () => {
-      const obj = { name: currentName, ...state };
-      await navigator.clipboard.writeText(JSON.stringify(obj, null, 2));
-      notify("Copied pack.json to clipboard!");
+      await navigator.clipboard.writeText(JSON.stringify(exportPayload(), null, 2));
+      notify(`Copied (${document.getElementById("export-fmt").value}) to clipboard!`);
     };
 
     document.getElementById("btn-dl-pack").onclick = () => {
-      const obj = { name: currentName, ...state };
-      const blob = new Blob([JSON.stringify(obj, null, 2) + "\n"], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(exportPayload(), null, 2) + "\n"], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = currentName.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".json";
       a.click();
-      notify("Downloaded pack JSON!");
+      notify("Downloaded JSON!");
     };
 
     document.getElementById("btn-copy-ide").onclick = async () => {
-      const ov = parseOverlay(state.overlayRgb);
-      const hex = arr => "#" + arr.map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
-      const ide = {
-        "workbench.colorCustomizations": {
-          "focusBorder": state.primary,
-          "editor.background": hex(blendOver(parseRgba(state.aiCardBg), ov)),
-          "editor.foreground": state.uiTextColor,
-          "sideBar.background": hex(blendOver(parseRgba(state.sidebarBg), ov)),
-          "sideBar.foreground": state.uiTextColor,
-          "scrollbarSlider.background": state.uiTextColor + "59"
-        }
-      };
-      await navigator.clipboard.writeText(JSON.stringify(ide, null, 2));
-      notify("Copied IDE workbench.colorCustomizations!");
+      await navigator.clipboard.writeText(JSON.stringify(buildFullIdeConfig(), null, 2));
+      notify("Copied full 25+ key IDE workbench.colorCustomizations!");
     };
 
     document.getElementById("btn-copy-prompt").onclick = async () => {
