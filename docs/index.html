@@ -1149,7 +1149,8 @@
       document.getElementById("lantern-mark").style.display = state.isOrnament ? "block" : "none";
 
       const codeBox = document.getElementById("code-box");
-      codeBox.style.background = `rgba(${state.overlayRgb}, 0.85)`;
+      codeBox.style.background = state.modalBg || state.cardBg || `rgba(${state.overlayRgb}, 0.85)`;
+      codeBox.style.color = state.uiTextColor;
       codeBox.style.border = state.innerBorder || `1px solid ${state.aiCardBorder}`;
 
       const cvdDiff = document.getElementById("chk-cvd-diff").checked;
