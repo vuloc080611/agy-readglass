@@ -4,7 +4,7 @@
 >
 > *Work-session glass themes for Antigravity, contrast-verified for 8-hour readability.*
 
-[![Validate Clearframe](https://img.shields.io/badge/WCAG-AA%2FAAA%20Gated-1f6b45)](./tools/check_contrast.py)
+[![Validate Clearframe](https://github.com/vuloc080611/agy-readglass/actions/workflows/validate.yml/badge.svg)](https://github.com/vuloc080611/agy-readglass/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-e0a45a.svg)](./LICENSE)
 [![Python Stdlib Only](https://img.shields.io/badge/Python-3.10%2B%20Stdlib-3ecf8e)](./src/clearframe_core)
 
@@ -92,6 +92,17 @@ python tools/scaffold_theme.py --name "Rainy Porch" --primary "#d4a574" --second
 Tạo block `"workbench.colorCustomizations"` khớp màu với chat card, tự động nâng độ rõ scrollbar (`>= 3:1`) và hỗ trợ `--cvd-safe` (diff Xanh lam / Hổ phách cho người khiếm khuyết sắc giác):
 ```bash
 python tools/export_ide_sync.py --preset "Deep Ink" --cvd-safe
+# Hoặc kiểm tra đường dẫn settings chuẩn của Antigravity (chỉ đọc):
+python tools/doctor.py
+```
+
+### 4. Đổi preset theo ca làm việc & Hỗ trợ định dạng `mod-v2`
+```bash
+# Tự chọn Mekong Morning (sáng) / Deep Ink (chiều) / Lantern Hour (tối) hoặc chỉ định --shift
+python tools/shift_preset.py --shift night --target <path-to>/themes.json
+
+# Xuất định dạng cho antigravity-custom-theme-mod (defaultTheme + presets)
+python tools/sync_packs.py --format mod-v2 --output dist/themes-mod-v2.json
 ```
 
 ---
@@ -125,6 +136,7 @@ Repo cung cấp 3 skill độc lập đặt trong `skills/`:
 
 - Engine tiêm giao diện qua Chrome DevTools Protocol (CDP) tương thích với **`agy-theme`** của [chinhzz108/antigravity-custom-theme-rust](https://github.com/chinhzz108/antigravity-custom-theme-rust) (viết lại bằng Rust từ dự án gốc [giakiet22102006/antigravity-custom-theme-skill](https://github.com/giakiet22102006/antigravity-custom-theme-skill)).
 - **Clearframe** chỉ sở hữu các preset theo ca làm việc, bộ công cụ kiểm định/sinh màu, SVG `lantern-mark.svg`, Web Studio và các `SKILL.md` trong repo này.
+- Xem [CONTRIBUTING.md](./CONTRIBUTING.md) để đóng góp preset mới và [CHANGELOG.md](./CHANGELOG.md) cho lịch sử phiên bản.
 - Giấy phép: [MIT License](./LICENSE).
 
 ---
@@ -141,5 +153,5 @@ Repo cung cấp 3 skill độc lập đặt trong `skills/`:
 ### Included Tools & Skills (Python Stdlib Only)
 - **Interactive Preview Studio:** Try live at [vuloc080611.github.io/agy-readglass](https://vuloc080611.github.io/agy-readglass/) or open `docs/index.html` locally in any browser to test all 6 presets, drop a local wallpaper, toggle CVD/Night Light filters, inspect live WCAG/APCA scores, and export `pack.json`.
 - **Rescue Existing Themes:** `python tools/audit_repair.py --input themes.json --in-place --fix` preserves your wallpaper and accents while raising failing glass cards/muted inks to AA/AAA.
-- **OKLCH Theme Scaffolder & IDE Sync:** `tools/scaffold_theme.py`, `tools/analyze_wallpaper.py`, `tools/export_ide_sync.py`.
-- **Skills:** Install `skills/clearframe-theme`, `skills/clearframe-audit`, and `skills/clearframe-ide-sync` via `agy plugin install https://github.com/vuloc080611/agy-readglass` or `npx skills add vuloc080611/agy-readglass`.
+- **OKLCH Theme Scaffolder, Shift & IDE Sync:** `tools/scaffold_theme.py`, `tools/analyze_wallpaper.py`, `tools/shift_preset.py`, `tools/export_ide_sync.py`, `tools/doctor.py`, and `--format mod-v2` via `tools/sync_packs.py`.
+- **Skills:** Install `skills/clearframe-theme`, `skills/clearframe-audit`, and `skills/clearframe-ide-sync` via `agy plugin install https://github.com/vuloc080611/agy-readglass` or `npx skills add vuloc080611/agy-readglass`. See [CONTRIBUTING.md](./CONTRIBUTING.md) & [CHANGELOG.md](./CHANGELOG.md).
